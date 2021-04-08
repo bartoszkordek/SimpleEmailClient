@@ -8,7 +8,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 public class EmailUtil {
-    public static void sendEmail(Session session, String fromEmail, String toEmail, String subject, String body){
+    public static void sendEmail(Session session, String fromEmail, String personal, String toEmail, String subject, String body){
         try
         {
             MimeMessage msg = new MimeMessage(session);
@@ -17,7 +17,7 @@ public class EmailUtil {
             msg.addHeader("format", "flowed");
             msg.addHeader("Content-Transfer-Encoding", "8bit");
 
-            msg.setFrom(new InternetAddress(fromEmail, "ASK"));
+            msg.setFrom(new InternetAddress(fromEmail, personal));
 
             msg.setReplyTo(InternetAddress.parse(fromEmail, false));
 

@@ -23,6 +23,6 @@ public class EmailSSL {
             }
         };
         Session session = Session.getDefaultInstance(props, auth);
-        EmailUtil.sendEmail(session,fromEmail, toEmail,"SSLEmail Testing Subject", "SSLEmail Testing Body");
+        EmailUtil.sendEmail(session,fromEmail, "ASK", toEmail,"SSLEmail Testing Subject", "SSLEmail Testing Body");
     }
 }

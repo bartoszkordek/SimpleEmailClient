@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class EmailTLS {
 
-    public static void sendEmail(String fromEmail, String toEmail, String password) {
+    public static void sendEmail(String fromEmail, String personal, String toEmail, String password, String subject, String body) {
 
         System.out.println("TLSEmail Start");
         Properties props = new Properties();
@@ -26,7 +26,7 @@ public class EmailTLS {
         };
         Session session = Session.getInstance(props, auth);
 
-        EmailUtil.sendEmail(session, fromEmail, toEmail,"TLSEmail Testing Subject", "TLSEmail Testing Body");
+        EmailUtil.sendEmail(session, fromEmail, personal, toEmail,subject, body);
 
     }
 }

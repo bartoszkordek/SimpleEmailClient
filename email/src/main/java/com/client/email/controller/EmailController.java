@@ -1,10 +1,10 @@
 package com.client.email.controller;
 
+import com.client.email.exception.RestException;
+import com.client.email.model.SendEmail;
 import com.client.email.service.EmailService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/email")
@@ -21,11 +21,9 @@ public class EmailController {
         return "OK";
     }
 
-    @PostMapping("/send/{fromEmail}/{toEmail}/{password}")
-    public void sendEmailSSL(@PathVariable("fromEmail") final String fromEmail,
-                             @PathVariable("toEmail") final String toEmail,
-                             @PathVariable("password") final String password){
-        emailService.sendEmailSSL(fromEmail, toEmail, password);
+    @PostMapping("/send")
+    public void sendEmailSSL(@Valid @RequestBody SendEmail sendEmailRequest) throws RestException {
+        emailService.sendEmailSSL(sendEmailRequest);
     }
 
 
