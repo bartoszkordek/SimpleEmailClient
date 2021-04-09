@@ -1,4 +1,4 @@
-package com.client.email.util;
+package com.client.email.util.send;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;

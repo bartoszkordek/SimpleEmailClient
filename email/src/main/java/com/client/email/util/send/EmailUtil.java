@@ -1,4 +1,4 @@
-package com.client.email.util;
+package com.client.email.util.send;
 
 import javax.mail.Message;
 import javax.mail.Session;

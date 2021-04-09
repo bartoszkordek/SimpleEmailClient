@@ -4,6 +4,8 @@ import com.client.email.exception.RestException;
 import com.client.email.model.SendEmail;
 import com.client.email.service.EmailService;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 @RestController
@@ -22,8 +24,13 @@ public class EmailController {
     }
 
     @PostMapping("/send")
-    public void sendEmailSSL(@Valid @RequestBody SendEmail sendEmailRequest) throws RestException {
+    public void sendEmail(@Valid @RequestBody SendEmail sendEmailRequest) throws RestException {
         emailService.sendEmailSSL(sendEmailRequest);
+    }
+
+    @RequestMapping("/receive")
+    public void receiveEmail() throws MessagingException {
+        emailService.receiveEmail();
     }
 
 
