@@ -90,7 +90,7 @@ public class MainScreen extends JFrame {
 		String host = "imap.gmail.com";
 		String port = "993";
 		String userName = "aghproject2020@gmail.com";
-		String password = "LirykaFunika2020";
+		String password = "";
 		EmailReceiver receiver = new EmailReceiver();
 		return receiver.downloadEmails(protocol, host, port, userName, password);
 	}
