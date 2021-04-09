@@ -30,6 +30,11 @@ public class EmailReceiver {
         properties.setProperty(
                 String.format("mail.%s.socketFactory.port", protocol),
                 String.valueOf(port));
+
+        properties.put("mail.transport.protocol", "imap");
+        properties.put("mail.imap.auth", "true");
+        properties.put("mail.imap.ssl.checkserveridentity", "false");
+        properties.put("mail.imap.ssl.trust", "*");
  
         return properties;
     }
