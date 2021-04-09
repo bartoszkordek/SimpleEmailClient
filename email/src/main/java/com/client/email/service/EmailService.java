@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    public void sendEmailSSL(SendEmail sendEmailRequest) {
+    public void sendEmailTLS(SendEmail sendEmailRequest) {
         EmailTLS.sendEmail(sendEmailRequest.getFromEmail(), sendEmailRequest.getPersonal(), sendEmailRequest.getToEmail(),
                     sendEmailRequest.getPassword(), sendEmailRequest.getSubject(), sendEmailRequest.getBody());
     }

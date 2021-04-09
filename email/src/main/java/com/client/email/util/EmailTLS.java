@@ -26,7 +26,8 @@ public class EmailTLS {
         };
         Session session = Session.getInstance(props, auth);
 
-        EmailUtil.sendEmail(session, fromEmail, personal, toEmail,subject, body);
+        //EmailUtil.sendEmail(session, fromEmail, personal, toEmail,subject, body);
+        EmailUtil.sendEmailWithAttachment(session, fromEmail, personal, toEmail,subject, body);
 
     }
 }
