@@ -1,5 +1,6 @@
 package io.github.email.client.mail;
 
+import io.github.email.client.EmailReceiver;
 import io.github.email.client.FileChooser;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import java.util.Properties;
 public class SwingEmailSender extends JFrame {
 	private final ConfigService configUtil = new ConfigService();
 	private final JMenuBar menuBar = new JMenuBar();
-	private final JMenu menuFile = new JMenu("File");
+	private final JMenu menuFile = new JMenu("Settings");
 	private final JMenuItem menuItemSetting = new JMenuItem("Settings..");
 	private final JLabel labelTo = new JLabel("To: ");
 	private final JLabel labelSubject = new JLabel("Subject: ");

@@ -1,7 +1,7 @@
 package io.github.email.client;
 
+import java.security.*;
 import java.util.Properties;
- 
 import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -23,12 +23,13 @@ public class EmailReceiver {
      * @return a Properties object
      */
     private Properties getServerProperties(String protocol, String host,
-            String port) {
+            String port) throws GeneralSecurityException {
         Properties properties = new Properties();
  
         // server setting
         properties.put(String.format("mail.%s.host", protocol), host);
         properties.put(String.format("mail.%s.port", protocol), port);
+
  
         // SSL setting
         properties.setProperty(
@@ -40,6 +41,11 @@ public class EmailReceiver {
         properties.setProperty(
                 String.format("mail.%s.socketFactory.port", protocol),
                 String.valueOf(port));
+
+        properties.put("mail.transport.protocol", "imap");
+        properties.put("mail.imap.auth", "true");
+        properties.put("mail.imap.ssl.checkserveridentity", "false");
+        properties.put("mail.imap.ssl.trust", "*");
  
         return properties;
     }
@@ -53,7 +59,7 @@ public class EmailReceiver {
      * @param password
      */
     public void downloadEmails(String protocol, String host, String port,
-            String userName, String password) {
+            String userName, String password) throws GeneralSecurityException {
         Properties properties = getServerProperties(protocol, host, port);
         Session session = Session.getDefaultInstance(properties);
  
@@ -188,7 +194,7 @@ public class EmailReceiver {
     /**
      * Test downloading e-mail messages
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws GeneralSecurityException {
         // for POP3
         //String protocol = "pop3";
         //String host = "pop.gmail.com";
@@ -201,6 +207,7 @@ public class EmailReceiver {
 
         String userName = "aghproject2020@gmail.com";
         String password = "";
+
 
         EmailReceiver receiver = new EmailReceiver();
         receiver.downloadEmails(protocol, host, port, userName, password);
