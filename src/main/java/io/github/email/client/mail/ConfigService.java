@@ -46,5 +46,6 @@ public class ConfigService {
 		properties.setProperty("mail.password", pass);
 		properties.setProperty("mail.smtp.starttls.enable", "true");
 		properties.setProperty("mail.smtp.auth", "true");
+		properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
 	}
 }
