@@ -1,4 +1,6 @@
-package io.github.email.client.mail;
+package io.github.email.client.dialogs;
+
+import io.github.email.client.service.ConfigService;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -6,7 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.Properties;

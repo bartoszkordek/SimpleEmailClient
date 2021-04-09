@@ -1,4 +1,4 @@
-package io.github.email.client.mail;
+package io.github.email.client.service;
 
 import java.io.File;
 import java.io.FileInputStream;

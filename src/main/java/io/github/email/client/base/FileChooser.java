@@ -1,11 +1,11 @@
-package io.github.email.client;
+package io.github.email.client.base;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,21 +17,15 @@ public class FileChooser extends JPanel implements ActionListener {
 	public FileChooser(String textFieldLabel, String buttonLabel) {
 		super(new BorderLayout());
 		fileChooser = new JFileChooser();
-		
 		setLayout(new BorderLayout());
 
-		// creates the GUI
 		JLabel label = new JLabel(textFieldLabel);
-		
 		textField = new JTextField(30);
 		attachButton = new JButton(buttonLabel);
-
 		attachButton.addActionListener(this);
-		
 		add(label);
 		add(textField);
 		add(attachButton);
-		
 	}
 
 	@Override
