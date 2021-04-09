@@ -10,13 +10,15 @@ public class SendEmail {
     private String password;
     private String subject;
     private String body;
+    private String filePath;
 
     public SendEmail(@JsonProperty("fromEmail") String fromEmail,
                      @JsonProperty("personal") String personal,
                      @JsonProperty("toEmail") String toEmail,
                      @JsonProperty("password") String password,
                      @JsonProperty("subject") String subject,
-                     @JsonProperty("body") String body
+                     @JsonProperty("body") String body,
+                     @JsonProperty("filePath") String filePath
 
     ){
         this.fromEmail = fromEmail;
@@ -25,6 +27,7 @@ public class SendEmail {
         this.password = password;
         this.subject = subject;
         this.body = body;
+        this.filePath = filePath;
     }
 
     public String getFromEmail() {
@@ -49,5 +52,9 @@ public class SendEmail {
 
     public String getBody() {
         return body;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 }
