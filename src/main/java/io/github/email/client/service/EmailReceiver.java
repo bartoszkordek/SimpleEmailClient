@@ -55,7 +55,7 @@ public class EmailReceiver {
  
             // fetches new messages from server
             Message[] messages = folderInbox.getMessages();
-            String[][] messageFields = new String[10][5];
+            String[][] messageFields = new String[25][5];
             int counter = 0;
             for (int i = messages.length-1; i >= 0; i--) {
                 Message msg = messages[i];
@@ -68,7 +68,7 @@ public class EmailReceiver {
                         .getRecipients(RecipientType.CC));
                 String sentDate = msg.getSentDate().toString();
 
-                System.out.println("email downloaded");
+                System.out.println((counter+1) + ". Email downloaded");
                 // TODO do it properly
                 messageFields[counter][0] = from;
                 messageFields[counter][1] = toList;
@@ -76,7 +76,7 @@ public class EmailReceiver {
                 messageFields[counter][3] = subject;
                 messageFields[counter][4] = sentDate;
                 counter++;
-                if (counter == 10) {
+                if (counter == 25) {
                     break;
                 }
             }
