@@ -8,6 +8,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 public class EmailUtil {
@@ -42,7 +43,7 @@ public class EmailUtil {
     }
 
     public static void sendEmailWithAttachment(Session session, String fromEmail, String personal, String toEmail,
-                                               String subject, String body){
+                                               String subject, String body, String filePath){
         try {
             MimeMessage msg = new MimeMessage(session);
 
@@ -68,22 +69,26 @@ public class EmailUtil {
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart);
-            messageBodyPart = new MimeBodyPart();
 
-            String filename = "C:/Users/barto/Pictures/2017-lexus-lc-500.jpg";
-            DataSource source = new FileDataSource(filename);
-            messageBodyPart.setDataHandler(new DataHandler(source));
-            messageBodyPart.setFileName(filename);
-            multipart.addBodyPart(messageBodyPart);
 
-            msg.setContent(multipart);
-
+            if(!filePath.isEmpty()){
+                messageBodyPart = new MimeBodyPart();
+                DataSource source = new FileDataSource(filePath);
+                messageBodyPart.setDataHandler(new DataHandler(source));
+                messageBodyPart.setFileName(filePath);
+                multipart.addBodyPart(messageBodyPart);
+                msg.setContent(multipart);
+            }
+            
             System.out.println("Message is ready");
             Transport.send(msg);
 
             System.out.println("EMail Sent Successfully!!");
-        }
-        catch (Exception e) {
+        } catch (MessagingException e){
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

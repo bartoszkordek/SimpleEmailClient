@@ -10,7 +10,7 @@ public class EmailService {
 
     public void sendEmailTLS(SendEmail sendEmailRequest) {
         EmailTLS.sendEmail(sendEmailRequest.getFromEmail(), sendEmailRequest.getPersonal(), sendEmailRequest.getToEmail(),
-                    sendEmailRequest.getPassword(), sendEmailRequest.getSubject(), sendEmailRequest.getBody());
+                    sendEmailRequest.getPassword(), sendEmailRequest.getSubject(), sendEmailRequest.getBody(), sendEmailRequest.getFilePath());
     }
 
 }
