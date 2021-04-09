@@ -1,0 +1,9 @@
+# IntelliJ
+*.iml
+.idea
+
+# Gradle
+.gradle
+
+# SMTP
+smtp.properties
