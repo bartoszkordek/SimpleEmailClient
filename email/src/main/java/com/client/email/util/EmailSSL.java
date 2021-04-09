@@ -7,7 +7,8 @@ import java.util.Properties;
 
 public class EmailSSL {
 
-    public static void sendEmail(String fromEmail, String toEmail, String password){
+    public static void sendEmail(String fromEmail, String personal, String toEmail, String password, String subject,
+                                 String body, String filePath){
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.poczta.onet.pl"); //SMTP Host
         props.put("mail.smtp.socketFactory.port", "465"); //SSL Port
@@ -23,6 +24,6 @@ public class EmailSSL {
             }
         };
         Session session = Session.getDefaultInstance(props, auth);
-        EmailUtil.sendEmail(session,fromEmail, "ASK", toEmail,"SSLEmail Testing Subject", "SSLEmail Testing Body");
+        EmailUtil.sendEmail(session, fromEmail, personal, toEmail,subject, body, filePath);
     }
 }

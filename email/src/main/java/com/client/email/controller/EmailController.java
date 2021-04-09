@@ -22,7 +22,7 @@ public class EmailController {
     }
 
     @PostMapping("/send")
-    public void sendEmail(@Valid @RequestBody SendEmail sendEmailRequest) throws RestException {
+    public void sendEmail(@RequestBody SendEmail sendEmailRequest) throws RestException {
         emailService.sendEmailTLS(sendEmailRequest);
     }
 }
