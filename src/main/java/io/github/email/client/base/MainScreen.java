@@ -14,6 +14,7 @@ import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import java.awt.Dimension;
 import java.util.List;
+import java.util.Properties;
 
 public class MainScreen extends JFrame {
 	private final ConfigService configUtil = new ConfigService();
@@ -86,11 +87,14 @@ public class MainScreen extends JFrame {
 	}
 
 	private String[][] prepareMessages() {
-		String protocol = "imap";
-		String host = "imap.gmail.com";
-		String port = "993";
-		String userName = "aghproject2020@gmail.com";
-		String password = "";
+		Properties properties=configUtil.getProperties();
+
+		String protocol = properties.getProperty("mail.imap","imap");
+		String host = properties.getProperty("mail.imap.host");
+		String port = properties.getProperty("mail.imap.port","993");
+		String userName = properties.getProperty("mail.user");
+		String password = properties.getProperty("mail.password");
+
 		EmailReceiver receiver = new EmailReceiver();
 		return receiver.downloadEmails(protocol, host, port, userName, password);
 	}
