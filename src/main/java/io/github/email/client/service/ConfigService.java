@@ -28,24 +28,55 @@ public class ConfigService {
 		return properties;
 	}
 	
-	public void saveProperties(String host, String port, String user, String pass) throws IOException {
-		setProperties(host, port, user, pass);
+	public void saveProperties(
+			String smtpHost,
+			String smtpPort,
+			String user,
+			String pass,
+			String imapHost,
+			String imapPort
+	) throws IOException {
+		setProperties(
+				smtpHost,
+				smtpPort,
+				user,
+				pass,
+				imapHost,
+				imapPort
+		);
 		OutputStream outputStream = new FileOutputStream(configFile);
 		properties.store(outputStream, "Email settings");
 		outputStream.close();
 	}
 
 	private void setDefaultProperties() {
-		setProperties("smtp.gmail.com", "587", "mail@gmail.com", "pass");
+		setProperties(
+				"smtp.gmail.com",
+				"587",
+				"mail@gmail.com",
+				"pass",
+				"imap.gmail.com",
+				"993"
+		);
 	}
 
-	private void setProperties(String host, String port, String user, String pass) {
-		properties.setProperty("mail.smtp.host", host);
-		properties.setProperty("mail.smtp.port", port);
+	private void setProperties(
+			String smtpHost,
+			String smtpPort,
+			String user,
+			String pass,
+			String imapHost,
+			String imapPort
+	) {
+		properties.setProperty("mail.smtp.host", smtpHost);
+		properties.setProperty("mail.smtp.port", smtpPort);
 		properties.setProperty("mail.user", user);
 		properties.setProperty("mail.password", pass);
 		properties.setProperty("mail.smtp.starttls.enable", "true");
 		properties.setProperty("mail.smtp.auth", "true");
 		properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
+		properties.setProperty("mail.imap","imap");
+		properties.setProperty("mail.imap.host",imapHost);
+		properties.setProperty("mail.imap.port",imapPort);
 	}
 }

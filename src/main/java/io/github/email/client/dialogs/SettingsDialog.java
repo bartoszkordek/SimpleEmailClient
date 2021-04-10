@@ -19,15 +19,19 @@ public class SettingsDialog extends JDialog {
 
 	private final ConfigService configUtil;
 	
-	private final JLabel labelHost = new JLabel("Host name: ");
-	private final JLabel labelPort = new JLabel("Port number: ");
+	private final JLabel labelSmptHost = new JLabel("Smpt Host name: ");
+	private final JLabel labelSmptPort = new JLabel("Smpt Port number: ");
 	private final JLabel labelUser = new JLabel("Username: ");
 	private final JLabel labelPass = new JLabel("Password: ");
+	private final JLabel labelImapHost = new JLabel("Imap Host name: ");
+	private final JLabel labelImapPort = new JLabel("Imap Port number: ");
 	
-	private final JTextField textHost = new JTextField(20);
-	private final JTextField textPort = new JTextField(20);
+	private final JTextField textSmptHost = new JTextField(20);
+	private final JTextField textSmptPort = new JTextField(20);
 	private final JTextField textUser = new JTextField(20);
 	private final JTextField textPass = new JTextField(20);
+	private final JTextField textImapHost=new JTextField(20);
+	private final JTextField textImapPort=new JTextField(20);
 	
 	private final JButton buttonSave = new JButton("Save");
 	
@@ -48,17 +52,17 @@ public class SettingsDialog extends JDialog {
 		constraints.insets = new Insets(10, 10, 5, 10);
 		constraints.anchor = GridBagConstraints.WEST;
 		
-		add(labelHost, constraints);
+		add(labelSmptHost, constraints);
 		
 		constraints.gridx = 1;
-		add(textHost, constraints);
+		add(textSmptHost, constraints);
 		
 		constraints.gridy = 1;
 		constraints.gridx = 0;
-		add(labelPort, constraints);
+		add(labelSmptPort, constraints);
 		
 		constraints.gridx = 1;
-		add(textPort, constraints);
+		add(textSmptPort, constraints);
 
 		constraints.gridy = 2;
 		constraints.gridx = 0;
@@ -73,8 +77,22 @@ public class SettingsDialog extends JDialog {
 		
 		constraints.gridx = 1;
 		add(textPass, constraints);
-		
+
 		constraints.gridy = 4;
+		constraints.gridx = 0;
+		add(labelImapHost, constraints);
+
+		constraints.gridx = 1;
+		add(textImapHost, constraints);
+
+		constraints.gridy = 5;
+		constraints.gridx = 0;
+		add(labelImapPort, constraints);
+
+		constraints.gridx = 1;
+		add(textImapPort, constraints);
+		
+		constraints.gridy = 6;
 		constraints.gridx = 0;
 		constraints.gridwidth = 2;
 		constraints.anchor = GridBagConstraints.CENTER;
@@ -85,18 +103,24 @@ public class SettingsDialog extends JDialog {
 	
 	private void loadSettings() {
 		Properties configProps = configUtil.getProperties();
-		textHost.setText(configProps.getProperty("mail.smtp.host"));
-		textPort.setText(configProps.getProperty("mail.smtp.port"));
+		textSmptHost.setText(configProps.getProperty("mail.smtp.host"));
+		textSmptPort.setText(configProps.getProperty("mail.smtp.port"));
 		textUser.setText(configProps.getProperty("mail.user"));
-		textPass.setText(configProps.getProperty("mail.password"));		
+		textPass.setText(configProps.getProperty("mail.password"));
+		textImapHost.setText(configProps.getProperty("mail.imap.host"));
+		textImapPort.setText(configProps.getProperty("mail.imap.port"));
 	}
 	
 	private void buttonSaveActionPerformed(ActionEvent event) {
 		try {
-			configUtil.saveProperties(textHost.getText(),
-					textPort.getText(),
+			configUtil.saveProperties(
+					textSmptHost.getText(),
+					textSmptPort.getText(),
 					textUser.getText(),
-					textPass.getText());
+					textPass.getText(),
+					textImapHost.getText(),
+					textImapPort.getText()
+			);
 			JOptionPane.showMessageDialog(SettingsDialog.this, 
 					"Settings were saved successfully.");
 			dispose();
