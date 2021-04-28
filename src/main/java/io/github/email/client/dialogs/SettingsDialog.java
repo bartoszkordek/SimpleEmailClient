@@ -103,7 +103,7 @@ public class SettingsDialog extends JDialog {
 					textSmtpPort.getText(),
 					textImapPort.getText(),
 					textUser.getText(),
-					textPass.getText(),
+					textPass.getText()
 			);
 			JOptionPane.showMessageDialog(SettingsDialog.this, 
 					"Settings were saved successfully.");
