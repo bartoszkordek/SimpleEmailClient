@@ -3,7 +3,7 @@ package io.github.email.client.base;
 import io.github.email.client.dialogs.SendDialog;
 import io.github.email.client.dialogs.SettingsDialog;
 import io.github.email.client.service.ConfigService;
-import io.github.email.client.service.EmailReceiver;
+import io.github.email.client.service.EmailService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,16 +80,9 @@ public class MainScreen extends JFrame {
         return downloadButton;
     }
 
-    private String[][] prepareMessages() {
-        Properties properties = configUtil.getProperties();
+	private String[][] prepareMessages() {
+		Properties configProperties = configUtil.getProperties();
+		return EmailService.downloadEmails(configProperties);
+	}
 
-        String protocol = properties.getProperty("mail.imap", "imap");
-        String host = properties.getProperty("mail.imap.host");
-        String port = properties.getProperty("mail.imap.port", "993");
-        String userName = properties.getProperty("mail.user");
-        String password = properties.getProperty("mail.password");
-
-        EmailReceiver receiver = new EmailReceiver();
-        return receiver.downloadEmails(protocol, host, port, userName, password);
-    }
 }

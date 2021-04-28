@@ -5,8 +5,8 @@
 # Gradle
 .gradle
 
-# SMTP
-smtp.properties
+# config
+config.properties
 
 build
 bin

@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 public class ConfigService {
-	private final File configFile = new File("smtp.properties");
+	private final File configFile = new File("config.properties");
 	private final Properties properties = new Properties();
 
 	public ConfigService()  {
@@ -28,46 +28,20 @@ public class ConfigService {
 		return properties;
 	}
 	
-	public void saveProperties(
-			String smtpHost,
-			String smtpPort,
-			String user,
-			String pass,
-			String imapHost,
-			String imapPort
-	) throws IOException {
-		setProperties(
-				smtpHost,
-				smtpPort,
-				user,
-				pass,
-				imapHost,
-				imapPort
-		);
+
+	public void saveProperties(String smtpHost, String imapHost, String smtpPort, String imapPort, String user, String pass) throws IOException {
+		setProperties(smtpHost, imapHost, smtpPort, imapPort, user, pass);
 		OutputStream outputStream = new FileOutputStream(configFile);
 		properties.store(outputStream, "Email settings");
 		outputStream.close();
 	}
 
 	private void setDefaultProperties() {
-		setProperties(
-				"smtp.gmail.com",
-				"587",
-				"mail@gmail.com",
-				"pass",
-				"imap.gmail.com",
-				"993"
-		);
+		setProperties("smtp.gmail.com", "imap.gmail.com", "587", "993", "mail@gmail.com", "pass");
 	}
 
-	private void setProperties(
-			String smtpHost,
-			String smtpPort,
-			String user,
-			String pass,
-			String imapHost,
-			String imapPort
-	) {
+	private void setProperties(String smtpHost, String imapHost, String smtpPort, String imapPort, String user, String pass) {
+
 		properties.setProperty("mail.smtp.host", smtpHost);
 		properties.setProperty("mail.smtp.port", smtpPort);
 		properties.setProperty("mail.user", user);
@@ -75,8 +49,16 @@ public class ConfigService {
 		properties.setProperty("mail.smtp.starttls.enable", "true");
 		properties.setProperty("mail.smtp.auth", "true");
 		properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
-		properties.setProperty("mail.imap","imap");
-		properties.setProperty("mail.imap.host",imapHost);
-		properties.setProperty("mail.imap.port",imapPort);
+		properties.setProperty("mail.imap.host", imapHost);
+		properties.setProperty("mail.imap.port", imapPort);
+		properties.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		properties.setProperty("mail.imap.socketFactory.fallback", "false");
+		properties.setProperty("mail.imap.socketFactory.port", "993");
+		properties.setProperty("mail.transport.protocol", "imap");
+		properties.setProperty("mail.imap.auth", "true");
+		properties.setProperty("mail.imap.ssl.checkserveridentity", "false");
+		properties.setProperty("mail.imap.ssl.trust", "*");
+
+
 	}
 }
