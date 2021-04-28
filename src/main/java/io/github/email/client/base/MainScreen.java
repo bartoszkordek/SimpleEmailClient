@@ -26,10 +26,15 @@ public class MainScreen extends JFrame {
     }
 
     private void setupMenu() {
+        sendButton.setName("Send email");
+        sendButton.setToolTipText("Send email");
         sendButton.addActionListener(event -> {
             SendDialog dialog = new SendDialog(MainScreen.this, configUtil);
             dialog.setVisible(true);
         });
+
+        settingsButton.setName("Settings");
+        settingsButton.setToolTipText("Settings");
         settingsButton.addActionListener(event -> {
             SettingsDialog dialog = new SettingsDialog(MainScreen.this, configUtil);
             dialog.setVisible(true);
