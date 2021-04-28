@@ -5,6 +5,7 @@ import io.github.email.client.service.ConfigService;
 import io.github.email.client.service.EmailService;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,12 +20,14 @@ import java.io.File;
 import java.util.Properties;
 
 public class SendDialog extends JDialog {
-    private final JLabel labelTo = new JLabel("To: ");
-    private final JLabel labelSubject = new JLabel("Subject: ");
+    private final JLabel labelTo = new JLabel("To:");
+    private final JLabel labelCc = new JLabel("CC:");
+    private final JLabel labelSubject = new JLabel("Subject:");
     private final JTextField fieldTo = new JTextField(30);
+    private final JTextField fieldCc = new JTextField(30);
     private final JTextField fieldSubject = new JTextField(30);
     private final JButton buttonSend = new JButton("Send");
-    private final FileChooser fileChooser = new FileChooser("Attached", "Attach File...");
+    private final FileChooser fileChooser = new FileChooser("Attached", "Attach");
     private final JTextArea textAreaMessage = new JTextArea(10, 30);
     private final GridBagConstraints constraints = new GridBagConstraints();
     private final ConfigService configUtil;
@@ -44,38 +47,22 @@ public class SendDialog extends JDialog {
         constraints.gridx = 0;
         constraints.gridy = 0;
         add(labelTo, constraints);
-
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        add(fieldTo, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        add(labelSubject, constraints);
-
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        add(fieldSubject, constraints);
-
-        constraints.gridx = 2;
-        constraints.gridy = 0;
-        constraints.gridheight = 2;
-        constraints.fill = GridBagConstraints.BOTH;
-        add(buttonSend, constraints);
-
+        addComponent(labelTo, 0, 0);
+        addComponent(fieldTo, 1, 0);
+        addComponent(labelCc, 0, 1);
+        addComponent(fieldCc, 1, 1);
+        addComponent(labelSubject, 0, 2);
+        addComponent(fieldSubject, 1, 2);
+        addComponent(buttonSend, 2, 0);
         buttonSend.addActionListener(event -> buttonSendActionPerformed());
+        addComponent(fileChooser, 2, 2);
+        addComponent(new JScrollPane(textAreaMessage), 1, 3);
+    }
 
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.gridheight = 1;
-        constraints.gridwidth = 3;
-        add(fileChooser, constraints);
-
-        constraints.gridy = 3;
-        constraints.weightx = 1.0;
-        constraints.weighty = 1.0;
-
-        add(new JScrollPane(textAreaMessage), constraints);
+    private void addComponent(JComponent component, int x, int y) {
+        constraints.gridx = x;
+        constraints.gridy = y;
+        add(component, constraints);
     }
 
     private void buttonSendActionPerformed() {
@@ -83,7 +70,8 @@ public class SendDialog extends JDialog {
             return;
         }
 
-        String toAddress = fieldTo.getText();
+        String[] toAddresses = fieldTo.getText().split(",");
+        String[] ccAddresses = fieldCc.getText().split(",");
         String subject = fieldSubject.getText();
         String message = textAreaMessage.getText();
 
@@ -96,7 +84,7 @@ public class SendDialog extends JDialog {
 
         try {
             Properties smtpProperties = configUtil.getProperties();
-            EmailService.sendEmail(smtpProperties, toAddress, subject, message, attachFiles);
+            EmailService.sendEmail(smtpProperties, toAddresses, ccAddresses, subject, message, attachFiles);
 
             JOptionPane.showMessageDialog(this,
                     "The e-mail has been sent successfully");

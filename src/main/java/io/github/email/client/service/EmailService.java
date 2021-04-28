@@ -1,10 +1,5 @@
 package io.github.email.client.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Properties;
-
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
@@ -16,13 +11,19 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Properties;
 
 public class EmailService {
-	public static void sendEmail(Properties configProperties, String toAddress,
+	public static void sendEmail(Properties configProperties, String[] to, String[] cc,
 			String subject, String message, File[] attachFiles)
 			throws MessagingException, IOException {
 
@@ -41,8 +42,24 @@ public class EmailService {
 		Message msg = new MimeMessage(session);
 
 		msg.setFrom(new InternetAddress(userName));
-		InternetAddress[] toAddresses = { new InternetAddress(toAddress) };
+		InternetAddress[] toAddresses = Arrays.stream(to).map(a -> {
+			try {
+				return new InternetAddress(a);
+			} catch (AddressException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}).toArray(InternetAddress[]::new);
+		InternetAddress[] ccs = Arrays.stream(cc).map(a -> {
+			try {
+				return new InternetAddress(a);
+			} catch (AddressException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}).toArray(InternetAddress[]::new);
 		msg.setRecipients(Message.RecipientType.TO, toAddresses);
+		msg.setRecipients(Message.RecipientType.CC, ccs);
 		msg.setSubject(subject);
 		msg.setSentDate(new Date());
 
