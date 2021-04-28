@@ -13,27 +13,55 @@ Celem projektu jest implementacja protokołów SMTP, POP3 wraz z wykonaniem pros
 ## Technologie
 * Język: Java 11
 * Interfejs użytkownika: biblioteka Swing
-<!---
 * Konteneryzacja: Docker 
 * Ciągła integracja (CI): GitHub Actions
---->
 
 ## Jak uruchomić?
 1. Wymagany jest zainstalowany [Docker](https://www.docker.com/).
-2. Sklonuj lub pobierz projekt.
+1. Sklonuj lub pobierz projekt.
    * Do sklonowania projektu jest wymagany zainstalowany [Git](https://git-scm.com/).
    ```shell script
    git clone https://github.com/bartoszkordek/SimpleEmailClient.git
    ```
-4. W głównym folderze projektu wpisz w terminalu:
+1. W głównym folderze projektu wpisz w terminalu:
    ```shell script
    docker-compose up -d
    ```
-   
+1. Uruchomienie może zająć do kilku minut.
+1. Ostatecznie powinno pojawić się okno dialogowe z aplikacją ***Simple email client***
+
 ## Jak zatrzymać?
 1. W głównym folderze projektu wpisz w terminalu:
     ```shell script
     docker-compose down
     ```
 
-## [EN-SimpleEmailClient](#en-simple-email-client)
+# [SimpleEmailClient](#en-simple-email-client)
+
+## Description
+
+## Technologies
+* Language: Java 11
+* User interface: Swing library
+* Containerization: Docker 
+* Continuous integration (CI): GitHub Actions
+
+## How to start?
+1. You will need [Docker](https://www.docker.com/).
+1. Clone or copy the project.
+   * To clone the project you will need [Git](https://git-scm.com/).
+   ```shell script
+   git clone https://github.com/bartoszkordek/SimpleEmailClient.git
+   ```
+3. In root folder of the project type in terminal:
+    ```shell script
+    docker-compose up --build -d
+    ```
+1. Startup may last up to a few minutes.
+1. Eventually you should see dialogue window with application ***Simple email client***
+
+## How to stop?
+1. In root folder of the project type in terminal:
+    ```shell script
+    docker-compose down
+    ```
