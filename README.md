@@ -3,7 +3,7 @@
 # SimpleEmailClient
 
 ## Opis
-Celem projektu jest implementacja protokołów SMTP, POP3 wraz z wykonaniem prostego interfejsu użytkownika.
+Celem projektu jest implementacja protokołów SMTP, POP3 wraz z wykonaniem prostego interfejsu użytkownika. Projekt jest wykonywany w ramach przedmiotu Administracja Systemów Komputerowych, AGH, WIET.
 
 ## Uczestnicy
 1. Bartosz Kordek (kordek@student.agh.edu.pl)
@@ -39,6 +39,12 @@ Celem projektu jest implementacja protokołów SMTP, POP3 wraz z wykonaniem pros
 # EN SimpleEmailClient
 
 ## Description
+The aim of the project is to implement the SMTP and POP3 protocols along with the implementation of a simple user interface. The project is carried out as part of the subject of Computer Systems Administration, AGH, WIET.
+
+## Participants
+1. Bartosz Kordek (kordek@student.agh.edu.pl)
+2. Marcin Włodarczyk (mwlodarc@student.agh.edu.pl)
+3. Grzegorz Zacharski (gzacharski@student.agh.edu.pl)
 
 ## Technologies
 * Language: Java 11
