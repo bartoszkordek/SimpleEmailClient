@@ -4,16 +4,21 @@ package io.github.email.client.base;
 import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.testing.AssertJSwingTestCaseTemplate;
+import org.junit.Assume;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class MainScreenTest {
+import java.awt.*;
+
+class MainScreenTest extends AssertJSwingTestCaseTemplate {
 	private FrameFixture window;
 
 	@BeforeAll
 	static void beforeAll() {
+		Assume.assumeFalse(GraphicsEnvironment.isHeadless());
 		FailOnThreadViolationRepaintManager.install();
 	}
 
