@@ -92,7 +92,6 @@ public class SettingsDialog extends JDialog {
 		textImapPort.setText(configProps.getProperty("mail.imap.port"));
 		textUser.setText(configProps.getProperty("mail.user"));
 		textPass.setText(configProps.getProperty("mail.password"));
-
 	}
 	
 	private void buttonSaveActionPerformed(ActionEvent event) {

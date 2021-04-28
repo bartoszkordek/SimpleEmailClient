@@ -22,14 +22,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 
-public class EmailService {
-	public static void sendEmail(Properties configProperties, String[] to, String[] cc,
-			String subject, String message, File[] attachFiles)
-			throws MessagingException, IOException {
+public class HighLevelEmailApi implements EmailApi {
+	public void sendEmail(Properties configProperties, String[] to, String[] cc, String[] bcc,
+						  String subject, String message, File[] attachFiles) throws MessagingException, IOException {
 
 		final String userName = configProperties.getProperty("mail.user");
 		final String password = configProperties.getProperty("mail.password");
-		
+
 		// creates a new session with an authenticator
 		Authenticator auth = new Authenticator() {
 			public PasswordAuthentication getPasswordAuthentication() {
@@ -42,24 +41,13 @@ public class EmailService {
 		Message msg = new MimeMessage(session);
 
 		msg.setFrom(new InternetAddress(userName));
-		InternetAddress[] toAddresses = Arrays.stream(to).map(a -> {
-			try {
-				return new InternetAddress(a);
-			} catch (AddressException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}).toArray(InternetAddress[]::new);
-		InternetAddress[] ccs = Arrays.stream(cc).map(a -> {
-			try {
-				return new InternetAddress(a);
-			} catch (AddressException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}).toArray(InternetAddress[]::new);
-		msg.setRecipients(Message.RecipientType.TO, toAddresses);
-		msg.setRecipients(Message.RecipientType.CC, ccs);
+		msg.setRecipients(Message.RecipientType.TO, getInternetAddresses(to));
+		if (cc != null && cc.length > 0) {
+			msg.setRecipients(Message.RecipientType.CC, getInternetAddresses(cc));
+		}
+		if (bcc != null && bcc.length > 0) {
+			msg.setRecipients(Message.RecipientType.BCC, getInternetAddresses(bcc));
+		}
 		msg.setSubject(subject);
 		msg.setSentDate(new Date());
 
@@ -73,10 +61,10 @@ public class EmailService {
 
 		// adds attachments
 		if (attachFiles != null && attachFiles.length > 0) {
-			for (File aFile : attachFiles) {
+			for (File file : attachFiles) {
 				MimeBodyPart attachPart = new MimeBodyPart();
 
-				attachPart.attachFile(aFile);
+				attachPart.attachFile(file);
 
 				multipart.addBodyPart(attachPart);
 			}
@@ -89,7 +77,18 @@ public class EmailService {
 		Transport.send(msg);
 	}
 
-	public static String[][] downloadEmails(Properties properties) {
+	private InternetAddress[] getInternetAddresses(String[] addresses) {
+		return Arrays.stream(addresses).map(address -> {
+			try {
+				return new InternetAddress(address);
+			} catch (AddressException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}).toArray(InternetAddress[]::new);
+	}
+
+	public String[][] downloadEmails(Properties properties) {
 		Session session = Session.getDefaultInstance(properties);
 		String protocol = properties.getProperty("mail.transport.protocol");
 		String username = properties.getProperty("mail.user");

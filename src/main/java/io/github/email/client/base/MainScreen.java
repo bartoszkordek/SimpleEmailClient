@@ -3,15 +3,24 @@ package io.github.email.client.base;
 import io.github.email.client.dialogs.SendDialog;
 import io.github.email.client.dialogs.SettingsDialog;
 import io.github.email.client.service.ConfigService;
-import io.github.email.client.service.EmailService;
+import io.github.email.client.service.EmailApi;
+import io.github.email.client.service.HighLevelEmailApi;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingWorker;
+import java.awt.Dimension;
 import java.util.List;
 import java.util.Properties;
 
 public class MainScreen extends JFrame {
     private final ConfigService configUtil = new ConfigService();
+    // TODO change to LowLevelApi implementation
+    private final EmailApi emailApi = new HighLevelEmailApi();
     private final JMenuBar menuBar = new JMenuBar();
     private final JButton sendButton = new JButton("Send email");
     private final JButton settingsButton = new JButton("Settings");
@@ -27,7 +36,7 @@ public class MainScreen extends JFrame {
 
     private void setupMenu() {
         sendButton.addActionListener(event -> {
-            SendDialog dialog = new SendDialog(MainScreen.this, configUtil);
+            SendDialog dialog = new SendDialog(MainScreen.this, emailApi, configUtil);
             dialog.setVisible(true);
         });
         settingsButton.addActionListener(event -> {
@@ -82,7 +91,7 @@ public class MainScreen extends JFrame {
 
 	private String[][] prepareMessages() {
 		Properties configProperties = configUtil.getProperties();
-		return EmailService.downloadEmails(configProperties);
+		return emailApi.downloadEmails(configProperties);
 	}
 
 }
