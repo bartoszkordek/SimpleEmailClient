@@ -28,6 +28,7 @@ public class ConfigService {
 		return properties;
 	}
 	
+
 	public void saveProperties(String smtpHost, String imapHost, String smtpPort, String imapPort, String user, String pass) throws IOException {
 		setProperties(smtpHost, imapHost, smtpPort, imapPort, user, pass);
 		OutputStream outputStream = new FileOutputStream(configFile);
@@ -40,7 +41,7 @@ public class ConfigService {
 	}
 
 	private void setProperties(String smtpHost, String imapHost, String smtpPort, String imapPort, String user, String pass) {
-		// SMTP
+
 		properties.setProperty("mail.smtp.host", smtpHost);
 		properties.setProperty("mail.smtp.port", smtpPort);
 		properties.setProperty("mail.user", user);
@@ -48,8 +49,6 @@ public class ConfigService {
 		properties.setProperty("mail.smtp.starttls.enable", "true");
 		properties.setProperty("mail.smtp.auth", "true");
 		properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
-
-		// IMAP
 		properties.setProperty("mail.imap.host", imapHost);
 		properties.setProperty("mail.imap.port", imapPort);
 		properties.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
@@ -59,5 +58,7 @@ public class ConfigService {
 		properties.setProperty("mail.imap.auth", "true");
 		properties.setProperty("mail.imap.ssl.checkserveridentity", "false");
 		properties.setProperty("mail.imap.ssl.trust", "*");
+
+
 	}
 }

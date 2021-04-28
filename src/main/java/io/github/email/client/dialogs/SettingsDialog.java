@@ -26,6 +26,7 @@ public class SettingsDialog extends JDialog {
 	private final JLabel labelImapPort = new JLabel("IMAP port: ");
 	private final JLabel labelUser = new JLabel("Username: ");
 	private final JLabel labelPass = new JLabel("Password: ");
+
 	
 	private final JTextField textSmtpHost = new JTextField(20);
 	private final JTextField textImapHost = new JTextField(20);
@@ -68,6 +69,7 @@ public class SettingsDialog extends JDialog {
 		
 		constraints.gridx = 0;
 		constraints.gridy = 6;
+
 		constraints.gridwidth = 2;
 		constraints.anchor = GridBagConstraints.CENTER;
 		add(buttonSave, constraints);
@@ -83,12 +85,14 @@ public class SettingsDialog extends JDialog {
 	
 	private void loadSettings() {
 		Properties configProps = configUtil.getProperties();
+
 		textSmtpHost.setText(configProps.getProperty("mail.smtp.host"));
 		textSmtpPort.setText(configProps.getProperty("mail.smtp.port"));
 		textImapHost.setText(configProps.getProperty("mail.imap.host"));
 		textImapPort.setText(configProps.getProperty("mail.imap.port"));
 		textUser.setText(configProps.getProperty("mail.user"));
-		textPass.setText(configProps.getProperty("mail.password"));		
+		textPass.setText(configProps.getProperty("mail.password"));
+
 	}
 	
 	private void buttonSaveActionPerformed(ActionEvent event) {
@@ -99,7 +103,8 @@ public class SettingsDialog extends JDialog {
 					textSmtpPort.getText(),
 					textImapPort.getText(),
 					textUser.getText(),
-					textPass.getText());
+					textPass.getText(),
+			);
 			JOptionPane.showMessageDialog(SettingsDialog.this, 
 					"Settings were saved successfully.");
 			dispose();
