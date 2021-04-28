@@ -1,4 +1,4 @@
-### [English version below](#SimpleEmailClient)
+### [English version below](#EN-SimpleEmailClient)
 
 # SimpleEmailClient
 
@@ -36,7 +36,7 @@ Celem projektu jest implementacja protokołów SMTP, POP3 wraz z wykonaniem pros
     docker-compose down
     ```
 
-# [SimpleEmailClient](#SimpleEmailClient)
+# EN SimpleEmailClient
 
 ## Description
 
