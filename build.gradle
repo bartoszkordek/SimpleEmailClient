@@ -1,6 +1,7 @@
 plugins {
-    id 'java'
+    id 'application'
 }
+apply plugin : 'java'
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
@@ -20,4 +21,17 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
+ext {
+    javaMainClass="io.github.email.client.Application"
+}
 
+application {
+    mainClassName=javaMainClass
+}
+
+task runWithExec(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run the main class with ExecTask"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), javaMainClass
+}
