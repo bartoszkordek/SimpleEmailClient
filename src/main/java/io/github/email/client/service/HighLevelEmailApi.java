@@ -1,5 +1,7 @@
 package io.github.email.client.service;
 
+import io.github.email.client.imap.MailMetadata;
+
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
@@ -18,9 +20,13 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class HighLevelEmailApi implements EmailApi {
 	public void sendEmail(Properties configProperties, String[] to, String[] cc, String[] bcc,
@@ -88,7 +94,7 @@ public class HighLevelEmailApi implements EmailApi {
 		}).toArray(InternetAddress[]::new);
 	}
 
-	public String[][] downloadEmails(Properties properties) {
+	public List<MailMetadata> downloadEmails(Properties properties, int limit) {
 		Session session = Session.getDefaultInstance(properties);
 		String protocol = properties.getProperty("mail.transport.protocol");
 		String username = properties.getProperty("mail.user");
@@ -104,42 +110,53 @@ public class HighLevelEmailApi implements EmailApi {
 			folderInbox.open(Folder.READ_ONLY);
 
 			// fetches new messages from server
-			Message[] messages = folderInbox.getMessages();
-			String[][] messageFields = new String[25][5];
-			int counter = 0;
-			for (int i = messages.length-1; i >= 0; i--) {
-				Message msg = messages[i];
-				Address[] fromAddress = msg.getFrom();
-				String from = fromAddress[0].toString();
-				String subject = msg.getSubject();
-				String toList = parseAddresses(msg
+			List<Message> messages = Arrays.stream(folderInbox.getMessages()).collect(Collectors.toList());
+			Collections.reverse(messages);
+			List<MailMetadata> metadatas = new ArrayList<>();
+			for (int i = 0; i < Math.min(limit, messages.size()); i++) {
+				Message message = messages.get(i);
+				String from = parseAddresses(message.getFrom());
+				String subject = message.getSubject();
+				String toList = parseAddresses(message
 						.getRecipients(Message.RecipientType.TO));
-				String ccList = parseAddresses(msg
+				String ccList = parseAddresses(message
 						.getRecipients(Message.RecipientType.CC));
-				String sentDate = msg.getSentDate().toString();
+				String bccList = parseAddresses(message
+						.getRecipients(Message.RecipientType.BCC));
+				String sentDate = message.getSentDate().toString();
 
-				System.out.println((counter+1) + ". Email downloaded");
-				// TODO do it properly
-				messageFields[counter][0] = from;
-				messageFields[counter][1] = toList;
-				messageFields[counter][2] = ccList;
-				messageFields[counter][3] = subject;
-				messageFields[counter][4] = sentDate;
-				counter++;
-				if (counter == 10) {
-					break;
-				}
+
+				System.out.println(i + ". Email downloaded");
+				metadatas.add(new MailMetadata(sentDate, from, toList, ccList, bccList, subject));
+
+//				String contentType = message.getContentType();
+//				String messageContent = "";
+//				if (contentType.contains("multipart")) {
+//					Multipart multiPart = (Multipart) message.getContent();
+//					int numberOfParts = multiPart.getCount();
+//					for (int partCount = 0; partCount < numberOfParts; partCount++) {
+//						MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+//						messageContent = part.getContent().toString();
+//					}
+//				}
+//				else if (contentType.contains("text/plain")
+//						|| contentType.contains("text/html")) {
+//					Object content = message.getContent();
+//					if (content != null) {
+//						messageContent = content.toString();
+//					}
+//				}
 			}
 
 			// disconnect
 			folderInbox.close(false);
 			store.close();
-			return messageFields;
+			return metadatas;
 		} catch (NoSuchProviderException ex) {
-			System.out.println("No provider for protocol: " + protocol);
+			System.err.println("No provider for protocol: " + protocol);
 			ex.printStackTrace();
 		} catch (MessagingException ex) {
-			System.out.println("Could not connect to the message store");
+			System.err.println("Could not connect to the message store");
 			ex.printStackTrace();
 		}
 		return null;

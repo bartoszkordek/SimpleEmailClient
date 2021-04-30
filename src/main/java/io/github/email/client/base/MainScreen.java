@@ -2,9 +2,10 @@ package io.github.email.client.base;
 
 import io.github.email.client.dialogs.SendDialog;
 import io.github.email.client.dialogs.SettingsDialog;
+import io.github.email.client.imap.MailMetadata;
 import io.github.email.client.service.ConfigService;
 import io.github.email.client.service.EmailApi;
-import io.github.email.client.service.HighLevelEmailApi;
+import io.github.email.client.service.LowLevelEmailApi;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,8 +20,7 @@ import java.util.Properties;
 
 public class MainScreen extends JFrame {
     private final ConfigService configUtil = new ConfigService();
-    // TODO change to LowLevelApi implementation
-    private final EmailApi emailApi = new HighLevelEmailApi();
+    private final EmailApi emailApi = new LowLevelEmailApi();
     private final JMenuBar menuBar = new JMenuBar();
     private final JButton sendButton = new JButton("Send email");
     private final JButton settingsButton = new JButton("Settings");
@@ -53,6 +53,7 @@ public class MainScreen extends JFrame {
         String[] columnNames = {"From",
                 "To",
                 "CC",
+                "BCC",
                 "Subject",
                 "Date"};
         setSize(600, 400);
@@ -91,7 +92,18 @@ public class MainScreen extends JFrame {
 
 	private String[][] prepareMessages() {
 		Properties configProperties = configUtil.getProperties();
-		return emailApi.downloadEmails(configProperties);
-	}
+        List<MailMetadata> metadatas = emailApi.downloadEmails(configProperties, 10);
+        String[][] converted = new String[metadatas.size()][6];
+        for (int i = 0; i < converted.length; i++) {
+            MailMetadata metadata = metadatas.get(i);
+            converted[i][0] = metadata.getFrom();
+            converted[i][1] = metadata.getTo();
+            converted[i][2] = metadata.getCc();
+            converted[i][3] = metadata.getBcc();
+            converted[i][4] = metadata.getSubject();
+            converted[i][5] = metadata.getDate();
+        }
+        return converted;
+    }
 
 }
