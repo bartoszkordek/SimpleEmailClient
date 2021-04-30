@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
@@ -44,8 +45,8 @@ public class ImapClient {
                 List<MailMetadata> mailMetadatas = new ArrayList<>();
                 for (int i = 0; i < Math.min(limit, mailIds.size()); i++) {
                     int mailId = mailIds.get(i);
-                    List<MailContentPart> contents = fetchBodyStructure(writer, reader, mailId);
                     MailMetadata mailMetadata = fetchMetadata(writer, reader, mailId);
+                    System.out.println(i + ". email downloaded (low level API - using IMAP directly)");
                     mailMetadatas.add(mailMetadata);
                 }
                 return mailMetadatas;
@@ -92,15 +93,6 @@ public class ImapClient {
         return new ArrayList<>();
     }
 
-    private List<MailContentPart> fetchBodyStructure(PrintWriter writer, BufferedReader reader, int id) throws IOException {
-        CommandResponse response = sendCommand(writer, reader, "FETCH " + id + " (BODYSTRUCTURE)");
-        if (!response.getConfirmation().contains("OK")) {
-            throw new IOException("Getting BODYSTRUCTURE for " + id + " failed");
-        }
-        assert response.getLines().size() == 1;
-        return bodyStructureParser.parseMailContent(response.getLines().get(0));
-    }
-
     private MailMetadata fetchMetadata(PrintWriter writer, BufferedReader reader, int id) throws IOException {
         CommandResponse response = sendCommand(writer, reader, "FETCH " + id +
                 " (BODY[HEADER.FIELDS (SUBJECT DATE FROM TO CC BCC)])");
@@ -123,7 +115,30 @@ public class ImapClient {
                 subject = line.substring(9);
             }
         }
-        return new MailMetadata(date, from, to, cc, bcc, subject);
+        List<MailContentPart> parts = fetchBodyStructure(writer, reader, id);
+        String plainBody = "";
+        String htmlBody = "";
+        for (MailContentPart part : parts) {
+            if (part.getType().equals("PLAIN")) {
+                String encodedBody = fetchBodyPart(writer, reader, id, part.getPartNum()).replaceAll("\n", "");
+                byte[] decodedBytes = Base64.getDecoder().decode(encodedBody);
+                plainBody = new String(decodedBytes);
+                break;
+            } else if (part.getType().equals("HTML")) {
+                htmlBody = fetchBodyPart(writer, reader, id, part.getPartNum());
+                break;
+            }
+        }
+        return new MailMetadata(date, from, to, cc, bcc, subject, plainBody, htmlBody);
+    }
+
+    private List<MailContentPart> fetchBodyStructure(PrintWriter writer, BufferedReader reader, int id) throws IOException {
+        CommandResponse response = sendCommand(writer, reader, "FETCH " + id + " (BODYSTRUCTURE)");
+        if (!response.getConfirmation().contains("OK")) {
+            throw new IOException("Getting BODYSTRUCTURE for " + id + " failed");
+        }
+        assert response.getLines().size() == 1;
+        return bodyStructureParser.parseMailContent(response.getLines().get(0));
     }
 
     private String fetchBodyPart(PrintWriter writer, BufferedReader reader, int id, String partNum) throws IOException {
@@ -131,8 +146,8 @@ public class ImapClient {
         if (!response.getConfirmation().contains("OK")) {
             throw new IOException("Fetching body part " + partNum + " with ID " + id + " failed");
         }
-        // TODO handle html/plain/jpg etc.
-        return "";
+        String res = String.join("\n", response.getLines().subList(1, response.getLines().size()));
+        return res.substring(0, res.length()-1);
     }
 
     private CommandResponse sendCommand(PrintWriter writer, BufferedReader reader, String command) throws IOException {
@@ -180,20 +195,5 @@ public class ImapClient {
 
     private String getCounter() {
         return String.format("%09d", commandCounter);
-    }
-
-    // TODO delete
-    private Properties getProperties() {
-        Properties properties = new Properties();
-        properties.setProperty("mail.user", "marwlod.mailsender@gmail.com");
-        properties.setProperty("mail.password", "ziyvusjsvikhhedw");
-        properties.setProperty("mail.imap.host", "imap.gmail.com");
-        properties.setProperty("mail.imap.port", "993");
-        return properties;
-    }
-
-    public static void main(String[] args) {
-        ImapClient client = new ImapClient(true);
-        client.downloadEmails(client.getProperties(), 10);
     }
 }

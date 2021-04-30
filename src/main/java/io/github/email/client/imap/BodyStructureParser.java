@@ -16,7 +16,8 @@ public class BodyStructureParser {
             .of("MIXED", "MESSAGE", "DIGEST", "ALTERNATIVE", "RELATED", "REPORT", "SIGNED", "ENCRYPTED", "FORM DATA")
             .collect(Collectors.toCollection(HashSet<String>::new));
     private static final Pattern BODY_PATTERN = Pattern.compile(".*BODY\\w{0,9} (.*)\\)");
-    private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("^\\s*\"(TEXT|APPLICATION|IMAGE|VIDEO|AUDIO)\"", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile(
+            "^\\s*\"(TEXT|APPLICATION|IMAGE|VIDEO|AUDIO)\"", Pattern.CASE_INSENSITIVE);
     private static final Pattern MULTIPART_SUBTYPE_PATTERN = Pattern.compile(
             String.format("^\\s*\"(%s)\"", String.join("|", SUBTYPES)), Pattern.CASE_INSENSITIVE);
 
@@ -68,10 +69,10 @@ public class BodyStructureParser {
         Deque<Integer> depths = new ArrayDeque<>();
         List<MailContentPart> mailContentParts = new ArrayList<>();
         ContentToken firstToken = contentTokens.get(0);
-        int prevDepth = firstToken.getDepth();
+        int prevDepth = firstToken.depth;
         for (int i = 1; i < contentTokens.size(); i++) {
             ContentToken currToken = contentTokens.get(i);
-            int currDepth = currToken.getDepth();
+            int currDepth = currToken.depth;
             if (currDepth > prevDepth) {
                 prevDepth = currDepth;
                 if (counters.isEmpty()) {
@@ -94,11 +95,11 @@ public class BodyStructureParser {
                 }
             }
             depths.push(currDepth);
-            String[] parts = currToken.getText().split(" ");
+            String[] parts = currToken.text.split(" ");
             assert parts.length >= 2;
             assert parts[1].length() >= 2;
             String type = parts[1].substring(1, parts[1].length()-1);
-            mailContentParts.add(new MailContentPart(counters.peek(), type, currToken.getText()));
+            mailContentParts.add(new MailContentPart(counters.peek(), type, currToken.text));
         }
         return mailContentParts;
     }
@@ -130,28 +131,5 @@ public class BodyStructureParser {
             this.depth = depth;
             this.text = text;
         }
-
-        public int getDepth() {
-            return depth;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        @Override
-        public String toString() {
-            return "DepthText{" +
-                    "depth=" + depth +
-                    ", text='" + text + '\'' +
-                    '}';
-        }
-    }
-
-    public static void main(String[] args) {
-        BodyStructureParser parser = new BodyStructureParser();
-        String body = "3 (BODY ((((\"TEXT\" \"PLAIN\"  (\"charset\" \"US-ASCII\") NIL NIL \"QUOTED-PRINTABLE\" 2210 76)(\"TEXT\" \"HTML\"  (\"charset\" \"US-ASCII\") NIL NIL \"QUOTED-PRINTABLE\"3732 99) \"ALTERNATIVE\")(\"IMAGE\" \"GIF\"  (\"name\" \"pic00041.gif\") \"<2__=07BBFD03DDC66BF58f9e8a93@domain.org>\" NIL \"BASE64\" 1722)(\"IMAGE\" \"GIF\"  (\"name\" \"ecblank.gif\") \"<3__=07BBFD43DFC66BF58f9e8a93@domain.org>\" NIL \"BASE64\" 64) \"RELATED\")(\"APPLICATION\" \"PDF\"  (\"name\" \"Quote_VLQ5069.pdf\") \"<1__=07BBED03DFC66BF58f9e8a93@domain.org>\" NIL \"BASE64\" 59802) \"MIXED\"))";
-//        String body = "* 29 FETCH (UID 43 BODYSTRUCTURE ((\"TEXT\" \"HTML\" (\"CHARSET\" \"us-ascii\") NIL NIL \"7BIT\" 2 1 NIL NIL NIL)(\"IMAGE\" \"PNG\" (\"NAME\" \"Selection_002.png\") NIL NIL \"BASE64\" 34398 NIL (\"ATTACHMENT\" (\"FILENAME\" \"Selection_002.png\")) NIL)(\"IMAGE\" \"PNG\" (\"NAME\" \"Selection_003.png\") NIL NIL \"BASE64\" 117282 NIL (\"ATTACHMENT\" (\"FILENAME\" \"Selection_003.png\")) NIL) \"MIXED\" (\"BOUNDARY\" \"----=_Part_0_129247776.1619721204563\") NIL NIL))";
-        parser.parseMailContent(body).forEach(System.out::println);
     }
 }

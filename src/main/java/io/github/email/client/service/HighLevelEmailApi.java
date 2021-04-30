@@ -125,27 +125,23 @@ public class HighLevelEmailApi implements EmailApi {
 						.getRecipients(Message.RecipientType.BCC));
 				String sentDate = message.getSentDate().toString();
 
-
-				System.out.println(i + ". Email downloaded");
-				metadatas.add(new MailMetadata(sentDate, from, toList, ccList, bccList, subject));
-
-//				String contentType = message.getContentType();
-//				String messageContent = "";
-//				if (contentType.contains("multipart")) {
-//					Multipart multiPart = (Multipart) message.getContent();
-//					int numberOfParts = multiPart.getCount();
-//					for (int partCount = 0; partCount < numberOfParts; partCount++) {
-//						MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
-//						messageContent = part.getContent().toString();
-//					}
-//				}
-//				else if (contentType.contains("text/plain")
-//						|| contentType.contains("text/html")) {
-//					Object content = message.getContent();
-//					if (content != null) {
-//						messageContent = content.toString();
-//					}
-//				}
+				String contentType = message.getContentType();
+				String plainContent = "";
+				String htmlContent = "";
+				if (contentType.contains("multipart")) {
+					Multipart multiPart = (Multipart) message.getContent();
+					if (multiPart.getCount() > 0) {
+						MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(0);
+						htmlContent = part.getContent().toString();
+					}
+				} else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
+					Object content = message.getContent();
+					if (content != null) {
+						htmlContent = content.toString();
+					}
+				}
+				System.out.println(i + ". email downloaded (high level API)");
+				metadatas.add(new MailMetadata(sentDate, from, toList, ccList, bccList, subject, plainContent, htmlContent));
 			}
 
 			// disconnect
@@ -158,6 +154,8 @@ public class HighLevelEmailApi implements EmailApi {
 		} catch (MessagingException ex) {
 			System.err.println("Could not connect to the message store");
 			ex.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}

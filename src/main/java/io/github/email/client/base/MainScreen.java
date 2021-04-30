@@ -1,10 +1,12 @@
 package io.github.email.client.base;
 
+import io.github.email.client.dialogs.EmailContentDialog;
 import io.github.email.client.dialogs.SendDialog;
 import io.github.email.client.dialogs.SettingsDialog;
 import io.github.email.client.imap.MailMetadata;
 import io.github.email.client.service.ConfigService;
 import io.github.email.client.service.EmailApi;
+import io.github.email.client.service.HighLevelEmailApi;
 import io.github.email.client.service.LowLevelEmailApi;
 
 import javax.swing.JButton;
@@ -24,6 +26,8 @@ public class MainScreen extends JFrame {
     private final JMenuBar menuBar = new JMenuBar();
     private final JButton sendButton = new JButton("Send email");
     private final JButton settingsButton = new JButton("Settings");
+    private List<MailMetadata> metadatas;
+    private JScrollPane inboxTable;
 
     public MainScreen() {
         super("Simple email client");
@@ -50,12 +54,14 @@ public class MainScreen extends JFrame {
     }
 
     private JScrollPane prepareInboxTable() {
-        String[] columnNames = {"From",
+        String[] columnNames = {
+                "From",
                 "To",
                 "CC",
                 "BCC",
                 "Subject",
-                "Date"};
+                "Date"
+        };
         setSize(600, 400);
         setLocationRelativeTo(null);    // center on screen
 
@@ -63,6 +69,13 @@ public class MainScreen extends JFrame {
         final JTable table = new JTable(data, columnNames);
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
+        table.getSelectionModel().addListSelectionListener(event -> {
+            int messageIndex = table.getSelectedRow();
+            MailMetadata metadata = metadatas.get(messageIndex);
+            String text = metadata.getTextPlain().length() > 0 ? metadata.getTextPlain() : metadata.getTextHtml();
+            EmailContentDialog dialog = new EmailContentDialog(MainScreen.this, text);
+            dialog.setVisible(true);
+        });
         return new JScrollPane(table);
     }
 
@@ -71,13 +84,16 @@ public class MainScreen extends JFrame {
         downloadButton.addActionListener(e -> new SwingWorker<String, String>() {
             @Override
             protected String doInBackground() {
-                publish("Updated");
+                publish("Updated"); // need to publish anything, otherwise process() is skipped
                 return null;
             }
 
             @Override
             protected void process(List<String> chunks) {
-                JScrollPane inboxTable = prepareInboxTable();
+                if (inboxTable != null) {
+                    remove(inboxTable);
+                }
+                inboxTable = prepareInboxTable();
                 add(inboxTable);
                 MainScreen.this.setVisible(true);
             }
@@ -90,9 +106,9 @@ public class MainScreen extends JFrame {
         return downloadButton;
     }
 
-	private String[][] prepareMessages() {
+    private String[][] prepareMessages() {
 		Properties configProperties = configUtil.getProperties();
-        List<MailMetadata> metadatas = emailApi.downloadEmails(configProperties, 10);
+        metadatas = emailApi.downloadEmails(configProperties, 10);
         String[][] converted = new String[metadatas.size()][6];
         for (int i = 0; i < converted.length; i++) {
             MailMetadata metadata = metadatas.get(i);

@@ -7,14 +7,19 @@ public class MailMetadata {
     private final String cc;
     private final String bcc;
     private final String subject;
+    private final String textPlain;
+    private final String textHtml;
 
-    public MailMetadata(String date, String from, String to, String cc, String bcc, String subject) {
+    public MailMetadata(String date, String from, String to, String cc, String bcc,
+                        String subject, String textPlain, String textHtml) {
         this.date = date;
         this.from = from;
         this.to = to;
         this.cc = cc;
         this.bcc = bcc;
         this.subject = subject;
+        this.textPlain = textPlain;
+        this.textHtml = textHtml;
     }
 
     public String getDate() {
@@ -39,6 +44,14 @@ public class MailMetadata {
 
     public String getSubject() {
         return subject;
+    }
+
+    public String getTextPlain() {
+        return textPlain;
+    }
+
+    public String getTextHtml() {
+        return textHtml;
     }
 
     @Override
