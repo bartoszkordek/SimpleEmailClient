@@ -75,8 +75,8 @@ public class MainScreen extends JFrame {
         table.getSelectionModel().addListSelectionListener(event -> {
             int messageIndex = table.getSelectedRow();
             MailMetadata metadata = metadatas.get(messageIndex);
-            String text = metadata.getBodyPlain().length() > 0 ? metadata.getBodyPlain() : metadata.getBodyHtml();
-            EmailContentDialog dialog = new EmailContentDialog(MainScreen.this, text, metadata.getAttachments());
+            EmailContentDialog dialog = new EmailContentDialog(
+                    MainScreen.this, metadata.getBodyPlain(), metadata.getBodyHtml(), metadata.getAttachments());
             dialog.setVisible(true);
         });
         return new JScrollPane(table);
