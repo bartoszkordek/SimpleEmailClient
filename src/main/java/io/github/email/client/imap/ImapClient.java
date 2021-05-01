@@ -1,5 +1,7 @@
 package io.github.email.client.imap;
 
+import io.github.email.client.service.ReceiveApi;
+
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ImapClient {
+public class ImapClient implements ReceiveApi {
     private long commandCounter = 1;
     private final boolean debug;
     private final BodyStructureParser bodyStructureParser = new BodyStructureParser();
@@ -30,6 +32,7 @@ public class ImapClient {
         this.debug = debug;
     }
 
+    @Override
     public List<MailMetadata> downloadEmails(Properties properties, int limit) {
         String host = properties.getProperty("mail.imap.host");
         String port = properties.getProperty("mail.imap.port");

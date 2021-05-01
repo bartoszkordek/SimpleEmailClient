@@ -3,10 +3,12 @@ package io.github.email.client.base;
 import io.github.email.client.dialogs.EmailContentDialog;
 import io.github.email.client.dialogs.SendDialog;
 import io.github.email.client.dialogs.SettingsDialog;
+import io.github.email.client.imap.ImapClient;
 import io.github.email.client.imap.MailMetadata;
 import io.github.email.client.service.ConfigService;
-import io.github.email.client.service.EmailApi;
-import io.github.email.client.service.LowLevelEmailApi;
+import io.github.email.client.service.HighLevelSendApi;
+import io.github.email.client.service.ReceiveApi;
+import io.github.email.client.service.SendApi;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +23,9 @@ import java.util.Properties;
 
 public class MainScreen extends JFrame {
     private final ConfigService configUtil = new ConfigService();
-    private final EmailApi emailApi = new LowLevelEmailApi();
+    // TODO change to low level API (Grzegorz/Bartosz)
+    private final SendApi sendApi = new HighLevelSendApi();
+    private final ReceiveApi receiveApi = new ImapClient();
     private final JMenuBar menuBar = new JMenuBar();
     private final JButton sendButton = new JButton("Send email");
     private final JButton settingsButton = new JButton("Settings");
@@ -39,7 +43,7 @@ public class MainScreen extends JFrame {
 
     private void setupMenu() {
         sendButton.addActionListener(event -> {
-            SendDialog dialog = new SendDialog(MainScreen.this, emailApi, configUtil);
+            SendDialog dialog = new SendDialog(MainScreen.this, sendApi, configUtil);
             dialog.setVisible(true);
         });
         settingsButton.addActionListener(event -> {
@@ -107,7 +111,7 @@ public class MainScreen extends JFrame {
 
     private String[][] prepareMessages() {
 		Properties configProperties = configUtil.getProperties();
-        metadatas = emailApi.downloadEmails(configProperties, 10);
+        metadatas = receiveApi.downloadEmails(configProperties, 10);
         String[][] converted = new String[metadatas.size()][6];
         for (int i = 0; i < converted.length; i++) {
             MailMetadata metadata = metadatas.get(i);
