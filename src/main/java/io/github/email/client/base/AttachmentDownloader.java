@@ -28,7 +28,7 @@ public class AttachmentDownloader extends JPanel {
 	}
 
 	private void downloadAttachment(Attachment attachment) {
-		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+		if (fileChooser.showDialog(this, "Download") == JFileChooser.APPROVE_OPTION) {
 			String selectedPath = fileChooser.getSelectedFile().getAbsolutePath();
 			String fileName = attachment.getFileName();
 			try (FileOutputStream outputStream = new FileOutputStream(selectedPath + "/" + fileName)) {
