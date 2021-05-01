@@ -7,12 +7,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ImapClient {
@@ -116,20 +119,36 @@ public class ImapClient {
             }
         }
         List<MailContentPart> parts = fetchBodyStructure(writer, reader, id);
-        String plainBody = "";
-        String htmlBody = "";
+        List<Attachment> attachments = new ArrayList<>();
+        String bodyPlain = "";
+        String bodyHtml = "";
         for (MailContentPart part : parts) {
-            if (part.getType().equals("PLAIN")) {
-                String encodedBody = fetchBodyPart(writer, reader, id, part.getPartNum()).replaceAll("\n", "");
-                byte[] decodedBytes = Base64.getDecoder().decode(encodedBody);
-                plainBody = new String(decodedBytes);
-                break;
-            } else if (part.getType().equals("HTML")) {
-                htmlBody = fetchBodyPart(writer, reader, id, part.getPartNum());
-                break;
+            String body = fetchBodyPart(writer, reader, id, part.getPartNum());
+            byte[] bodyBytes;
+            // TODO support QUOTED-PRINTABLE?
+            if (part.getTokenText().contains("BASE64")) {
+                bodyBytes = Base64.getDecoder().decode(body.replaceAll("\n", ""));
+            } else {
+                bodyBytes = body.getBytes(StandardCharsets.UTF_8);
             }
+            if (part.getTokenText().contains("ATTACHMENT")) {
+                attachments.add(new Attachment(bodyBytes, part.getType(), getFileName(part.getTokenText())));
+            } else if (part.getType().equals("PLAIN")) {
+                bodyPlain = new String(bodyBytes, StandardCharsets.UTF_8);
+            } else if (part.getType().equals("HTML")){
+                bodyHtml = new String(bodyBytes, StandardCharsets.UTF_8);
+            } // discard the rest
         }
-        return new MailMetadata(date, from, to, cc, bcc, subject, plainBody, htmlBody);
+        return new MailMetadata(date, from, to, cc, bcc, subject, bodyPlain, bodyHtml, attachments);
+    }
+
+    private String getFileName(String textToken) {
+        Pattern pattern = Pattern.compile(".*\"ATTACHMENT\" \\(\"FILENAME\" \"(.*)\"\\).*");
+        Matcher matcher = pattern.matcher(textToken);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "unknownFile";
     }
 
     private List<MailContentPart> fetchBodyStructure(PrintWriter writer, BufferedReader reader, int id) throws IOException {

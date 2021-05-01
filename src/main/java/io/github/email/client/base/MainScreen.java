@@ -6,7 +6,6 @@ import io.github.email.client.dialogs.SettingsDialog;
 import io.github.email.client.imap.MailMetadata;
 import io.github.email.client.service.ConfigService;
 import io.github.email.client.service.EmailApi;
-import io.github.email.client.service.HighLevelEmailApi;
 import io.github.email.client.service.LowLevelEmailApi;
 
 import javax.swing.JButton;
@@ -72,8 +71,8 @@ public class MainScreen extends JFrame {
         table.getSelectionModel().addListSelectionListener(event -> {
             int messageIndex = table.getSelectedRow();
             MailMetadata metadata = metadatas.get(messageIndex);
-            String text = metadata.getTextPlain().length() > 0 ? metadata.getTextPlain() : metadata.getTextHtml();
-            EmailContentDialog dialog = new EmailContentDialog(MainScreen.this, text);
+            String text = metadata.getBodyPlain().length() > 0 ? metadata.getBodyPlain() : metadata.getBodyHtml();
+            EmailContentDialog dialog = new EmailContentDialog(MainScreen.this, text, metadata.getAttachments());
             dialog.setVisible(true);
         });
         return new JScrollPane(table);

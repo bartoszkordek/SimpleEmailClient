@@ -1,5 +1,7 @@
 package io.github.email.client.imap;
 
+import java.util.List;
+
 public class MailMetadata {
     private final String date;
     private final String from;
@@ -7,19 +9,21 @@ public class MailMetadata {
     private final String cc;
     private final String bcc;
     private final String subject;
-    private final String textPlain;
-    private final String textHtml;
+    private final String bodyPlain;
+    private final String bodyHtml;
+    private final List<Attachment> attachments;
 
-    public MailMetadata(String date, String from, String to, String cc, String bcc,
-                        String subject, String textPlain, String textHtml) {
+    public MailMetadata(String date, String from, String to, String cc, String bcc, String subject,
+                        String bodyPlain, String bodyHtml, List<Attachment> attachments) {
         this.date = date;
         this.from = from;
         this.to = to;
         this.cc = cc;
         this.bcc = bcc;
         this.subject = subject;
-        this.textPlain = textPlain;
-        this.textHtml = textHtml;
+        this.bodyPlain = bodyPlain;
+        this.bodyHtml = bodyHtml;
+        this.attachments = attachments;
     }
 
     public String getDate() {
@@ -46,12 +50,16 @@ public class MailMetadata {
         return subject;
     }
 
-    public String getTextPlain() {
-        return textPlain;
+    public String getBodyPlain() {
+        return bodyPlain;
     }
 
-    public String getTextHtml() {
-        return textHtml;
+    public String getBodyHtml() {
+        return bodyHtml;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
     }
 
     @Override

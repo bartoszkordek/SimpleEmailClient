@@ -1,5 +1,6 @@
 package io.github.email.client.service;
 
+import io.github.email.client.imap.Attachment;
 import io.github.email.client.imap.MailMetadata;
 
 import javax.mail.Address;
@@ -126,22 +127,29 @@ public class HighLevelEmailApi implements EmailApi {
 				String sentDate = message.getSentDate().toString();
 
 				String contentType = message.getContentType();
-				String plainContent = "";
-				String htmlContent = "";
+				List<Attachment> attachments = new ArrayList<>();
+				String bodyPlain = "";
+				String bodyHtml = "";
 				if (contentType.contains("multipart")) {
 					Multipart multiPart = (Multipart) message.getContent();
-					if (multiPart.getCount() > 0) {
-						MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(0);
-						htmlContent = part.getContent().toString();
+					for (int j = 0; j < multiPart.getCount(); j++) {
+						// TODO probably not all of them are attachments
+						MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(j);
+						attachments.add(new Attachment(part.getContent().toString().getBytes(), part.getContentType(), "file" + j));
 					}
-				} else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
+				} else if (contentType.contains("text/plain")) {
 					Object content = message.getContent();
 					if (content != null) {
-						htmlContent = content.toString();
+						bodyPlain = content.toString();
+					}
+				} else if (contentType.contains("text/html")) {
+					Object content = message.getContent();
+					if (content != null) {
+						bodyHtml = content.toString();
 					}
 				}
 				System.out.println(i + ". email downloaded (high level API)");
-				metadatas.add(new MailMetadata(sentDate, from, toList, ccList, bccList, subject, plainContent, htmlContent));
+				metadatas.add(new MailMetadata(sentDate, from, toList, ccList, bccList, subject, bodyPlain, bodyHtml, attachments));
 			}
 
 			// disconnect

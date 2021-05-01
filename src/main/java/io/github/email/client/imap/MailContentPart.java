@@ -3,12 +3,12 @@ package io.github.email.client.imap;
 public class MailContentPart {
     private final String partNum;
     private final String type;
-    private final String text;
+    private final String tokenText;
 
-    public MailContentPart(String partNum, String type, String text) {
+    public MailContentPart(String partNum, String type, String tokenText) {
         this.partNum = partNum;
         this.type = type;
-        this.text = text;
+        this.tokenText = tokenText;
     }
 
     public String getPartNum() {
@@ -19,16 +19,16 @@ public class MailContentPart {
         return type;
     }
 
-    public String getText() {
-        return text;
+    public String getTokenText() {
+        return tokenText;
     }
 
     @Override
     public String toString() {
         return "MailContent{" +
-                "access='" + partNum + '\'' +
+                "partNum='" + partNum + '\'' +
                 ", type='" + type + '\'' +
-                ", text='" + text + '\'' +
+                ", tokenText='" + tokenText + '\'' +
                 '}';
     }
 }
