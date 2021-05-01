@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-public interface EmailApi {
+public interface SendApi {
     void sendEmail(Properties configProperties, String[] to, String[] cc, String[] bcc,
                    String subject, String message, File[] attachFiles) throws MessagingException, IOException;
-
-    String[][] downloadEmails(Properties properties);
 }

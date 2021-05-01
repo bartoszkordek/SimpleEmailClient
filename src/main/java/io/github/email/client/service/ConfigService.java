@@ -41,7 +41,6 @@ public class ConfigService {
 	}
 
 	private void setProperties(String smtpHost, String imapHost, String smtpPort, String imapPort, String user, String pass) {
-
 		properties.setProperty("mail.smtp.host", smtpHost);
 		properties.setProperty("mail.smtp.port", smtpPort);
 		properties.setProperty("mail.user", user);
@@ -58,7 +57,5 @@ public class ConfigService {
 		properties.setProperty("mail.imap.auth", "true");
 		properties.setProperty("mail.imap.ssl.checkserveridentity", "false");
 		properties.setProperty("mail.imap.ssl.trust", "*");
-
-
 	}
 }
