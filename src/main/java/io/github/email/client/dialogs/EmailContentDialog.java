@@ -4,37 +4,47 @@ import io.github.email.client.base.AttachmentDownloader;
 import io.github.email.client.imap.Attachment;
 
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.List;
 
 public class EmailContentDialog extends JDialog {
-    private final GridBagConstraints constraints = new GridBagConstraints();
 
-    public EmailContentDialog(JFrame parent, String emailBody, List<Attachment> attachments) {
+    public EmailContentDialog(JFrame parent, String bodyPlain, String bodyHtml, List<Attachment> attachments) {
         super(parent, "Email body", true);
-        setLayout(new GridBagLayout());
-        addAttachments(attachments);
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.gridwidth = 30;
-        JTextArea textAreaMessage = new JTextArea(30, 40);
-        add(new JScrollPane(textAreaMessage), constraints);
-        textAreaMessage.setText(emailBody);
-        pack();
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        JEditorPane contentText;
+        if (!"".equals(bodyHtml)) {
+            contentText = new JEditorPane("text/html", bodyHtml);
+        } else {
+            contentText = new JEditorPane("text/plain", bodyPlain);
+        }
+        JScrollPane scrollableContentText = new JScrollPane(contentText);
+        JPanel attachmentsPanel = new JPanel();
+        attachmentsPanel.setLayout(new GridBagLayout());
+        addAttachments(attachments, attachmentsPanel);
+        mainPanel.add(attachmentsPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollableContentText, BorderLayout.CENTER);
+        setSize(new Dimension(600, 600));
         setLocationRelativeTo(null);
+        add(mainPanel);
     }
 
-    private void addAttachments(List<Attachment> attachments) {
+    private void addAttachments(List<Attachment> attachments, JPanel panel) {
+        GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridy = 0;
         int x = 0;
         for (Attachment attachment : attachments) {
             AttachmentDownloader attachmentDownloader = new AttachmentDownloader(attachment);
             constraints.gridx = x++;
-            add(attachmentDownloader, constraints);
+            panel.add(attachmentDownloader, constraints);
         }
     }
 }

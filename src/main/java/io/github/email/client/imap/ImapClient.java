@@ -1,6 +1,8 @@
 package io.github.email.client.imap;
 
 import io.github.email.client.service.ReceiveApi;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.QuotedPrintableCodec;
 
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
@@ -128,9 +130,16 @@ public class ImapClient implements ReceiveApi {
         for (MailContentPart part : parts) {
             String body = fetchBodyPart(writer, reader, id, part.getPartNum());
             byte[] bodyBytes;
-            // TODO support QUOTED-PRINTABLE?
             if (part.getTokenText().contains("BASE64")) {
                 bodyBytes = Base64.getDecoder().decode(body.replaceAll("\n", ""));
+            } else if (part.getTokenText().contains("QUOTED-PRINTABLE")) {
+                // convert newlines to soft line breaks
+                bodyBytes = body.replaceAll("\n", "\r").getBytes(StandardCharsets.UTF_8);
+                try {
+                    bodyBytes = QuotedPrintableCodec.decodeQuotedPrintable(bodyBytes);
+                } catch (DecoderException e) {
+                    e.printStackTrace();
+                }
             } else {
                 bodyBytes = body.getBytes(StandardCharsets.UTF_8);
             }
