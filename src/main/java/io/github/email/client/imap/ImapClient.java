@@ -40,6 +40,7 @@ public class ImapClient implements ReceiveApi {
         String port = properties.getProperty("mail.imap.port");
         String user = properties.getProperty("mail.user");
         String password = properties.getProperty("mail.password");
+        properties.put("mail.imap.ssl.trust", properties.getProperty("mail.imap.host")); //trust Host
         try (Socket socket = SSLSocketFactory.getDefault().createSocket()) {
             socket.connect(new InetSocketAddress(host, Integer.parseInt(port)), 5 * 1000);
             try (PrintWriter writer = new PrintWriter(socket.getOutputStream());

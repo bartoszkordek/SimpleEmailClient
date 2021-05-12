@@ -4,6 +4,7 @@ import io.github.email.client.base.FileChooser;
 import io.github.email.client.service.ConfigService;
 import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SendApi;
+import io.github.email.client.smtp.SmtpClient;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -36,6 +37,7 @@ public class SendDialog extends JDialog {
     private final GridBagConstraints constraints = new GridBagConstraints();
     private final ConfigService configUtil;
     private final SendApi sendApi;
+    private final SmtpClient smtpClient = new SmtpClient(true);
 
     public SendDialog(JFrame parent, SendApi sendApi, ConfigService configUtil) {
         super(parent, "Send email", true);
@@ -97,7 +99,8 @@ public class SendDialog extends JDialog {
 
         try {
             Properties configProperties = configUtil.getProperties();
-            sendApi.sendEmail(configProperties, toAddresses, ccAddresses, bccAddresses, subject, message, attachFiles);
+            //sendApi.sendEmail(configProperties, toAddresses, ccAddresses, bccAddresses, subject, message, attachFiles);
+            smtpClient.sendEmail(configProperties, toAddresses, ccAddresses, bccAddresses, subject, message, attachFiles);
 
             JOptionPane.showMessageDialog(this,
                     "The e-mail has been sent successfully");
