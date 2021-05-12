@@ -2,50 +2,71 @@ package io.github.email.client.smtp;
 
 import io.github.email.client.imap.CommandResponse;
 import io.github.email.client.service.SendApi;
+import io.github.email.client.util.PropertiesLoader;
+import io.github.email.client.util.PropertiesLoaderImpl;
 
 import javax.mail.MessagingException;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SmtpClient implements SendApi {
 
-    private long commandCounter = 1;
     private final boolean debug;
+    private final Logger logger = Logger.getLogger(SmtpClient.class.getName());
+    private long commandCounter = 1;
+
+    public SmtpClient() {
+        this(false);
+    }
+
     public SmtpClient(boolean debug) {
         this.debug = debug;
+        if (!debug) logger.setLevel(Level.OFF);
     }
 
     @Override
-    public void sendEmail(Properties configProperties, String[] to, String[] cc, String[] bcc,
-                          String subject, String message, File[] attachFiles) throws MessagingException, IOException, NoSuchAlgorithmException, KeyManagementException {
-        // TODO implement (Grzegorz/Bartosz)
-        System.out.println("Hello");
-        String host = configProperties.getProperty("mail.smtp.host");
-        String port = configProperties.getProperty("mail.smtp.port");
-        String user = configProperties.getProperty("mail.user");
-        String password = configProperties.getProperty("mail.password");
-        configProperties.put("mail.smtp.ssl.trust", configProperties.getProperty("mail.smtp.host")); //trust Host
-        configProperties.put("mail.smtp.ssl.enable", true);
-        configProperties.put("mail.smtp.starttls.enable", false);
-        configProperties.put("mail.smtp.socketFactory.port", "465");
+    public void sendEmail(
+            Properties configProperties,
+            String[] to,
+            String[] cc,
+            String[] bcc,
+            String subject,
+            String message,
+            File[] attachFiles
+    ) throws MessagingException, IOException, NoSuchAlgorithmException, KeyManagementException {
+
+        logger.log(Level.INFO, "Start");
+        PropertiesLoader properties = new PropertiesLoaderImpl(configProperties);
+
+        String host = properties.getSmtpHost();
+        int port = properties.getSmtpPort();
+        String user = properties.getUser();
+        String password = properties.getPassword();
+
+        setUpAdditionalProperties(configProperties);
+
         SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
         sslContext.init(null, null, new SecureRandom());
 
         try (Socket socket = SSLSocketFactory.getDefault().createSocket()) {
-            socket.connect(new InetSocketAddress("smtp.gmail.com", Integer.parseInt("465")), 50 * 1000);
+            SocketAddress socketAddress = new InetSocketAddress(host, port);
+            int timeoutInMillis = 50 * 1000;
+            socket.connect(socketAddress, timeoutInMillis);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
             System.out.println(socket.getPort());
             System.out.println(socket.getInetAddress());
 
@@ -54,11 +75,17 @@ public class SmtpClient implements SendApi {
 
             handshake(writer, reader, commandSent);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void setUpAdditionalProperties(Properties configProperties) {
+        configProperties.put("mail.smtp.ssl.trust", configProperties.getProperty("mail.smtp.host")); //trust Host
+        configProperties.put("mail.smtp.ssl.enable", true);
+        configProperties.put("mail.smtp.starttls.enable", false);
+        configProperties.put("mail.smtp.socketFactory.port", "587");
+    }
 
     private void handshake(PrintWriter writer, BufferedReader reader, String command) throws IOException {
         CommandResponse response = sendCommand(writer, reader, command);
@@ -74,6 +101,7 @@ public class SmtpClient implements SendApi {
             throw new IOException("Login failed");
         }
     }
+
     private CommandResponse sendCommand(PrintWriter writer, BufferedReader reader, String command) throws IOException {
         // send to server
         String commandSent = command;
