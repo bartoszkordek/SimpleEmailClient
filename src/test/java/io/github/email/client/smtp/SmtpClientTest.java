@@ -2,6 +2,7 @@ package io.github.email.client.smtp;
 
 import io.github.email.client.service.ConfigService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.mail.MessagingException;
@@ -21,6 +22,7 @@ class SmtpClientTest {
         configService = new ConfigService();
     }
 
+    @Disabled
     @Test
     void shouldSendEmail() throws MessagingException, KeyManagementException, NoSuchAlgorithmException, IOException {
         String[] to = new String[]{"aghproject2020@gmail.com"};
