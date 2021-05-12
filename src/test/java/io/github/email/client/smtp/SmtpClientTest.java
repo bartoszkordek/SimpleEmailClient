@@ -27,7 +27,7 @@ class SmtpClientTest {
         String[] cc = new String[]{};
         String[] bcc = new String[]{};
         String subject = "testSmtp";
-        String message = "smtp message";
+        String message = "smtp message test";
         File[] attachFiles = new File[0];
 
         smtpClient.sendEmail(
