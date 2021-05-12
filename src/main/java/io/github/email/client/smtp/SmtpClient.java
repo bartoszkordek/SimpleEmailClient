@@ -98,7 +98,7 @@ public class SmtpClient implements SendApi {
             PropertiesLoader properties
     ) throws IOException {
         logger.log(Level.INFO, "Send HELO command...");
-        String command = SmtpState.HELO.toString() + " " + properties.getSmtpHost();
+        String command = SmtpCommand.HELO.toString() + " " + properties.getSmtpHost();
         writer.println(command);
         writer.flush();
         String serverReadyResponse = reader.readLine();
@@ -114,7 +114,7 @@ public class SmtpClient implements SendApi {
             PropertiesLoader properties
     ) throws IOException {
         logger.log(Level.INFO, "Send EHLO command...");
-        String command = SmtpState.EHLO.toString() + " " + properties.getSmtpHost();
+        String command = SmtpCommand.EHLO.toString() + " " + properties.getSmtpHost();
         writer.println(command);
         writer.flush();
 
@@ -136,7 +136,7 @@ public class SmtpClient implements SendApi {
     ) throws IOException {
         logger.log(Level.INFO, "Send AUTH command...");
 
-        final String loginCommand = SmtpState.AUTH_LOGIN.toString();
+        final String loginCommand = SmtpCommand.AUTH_LOGIN.toString();
         writer.println(loginCommand);
         writer.flush();
         final String serverResponse1 = reader.readLine();
@@ -166,15 +166,15 @@ public class SmtpClient implements SendApi {
     }
 
     private void sendMailFromCommand(PrintWriter writer, BufferedReader reader, PropertiesLoader properties) throws IOException {
-        logger.log(Level.INFO, "Send MAIL FROM command...");
+        logger.log(Level.INFO, "Send MAIL FROM: command...");
         final String userEmail = properties.getUser();
-        final String command = SmtpState.MAIL_FROM.toString() + ": <" + userEmail + ">";
+        final String command = SmtpCommand.MAIL.toString() + " <" + userEmail + ">";
         writer.println(command);
         writer.flush();
         final String serverReadyResponse = reader.readLine();
         logger.log(Level.INFO, serverReadyResponse);
         if (!serverReadyResponse.startsWith("250"))
-            throw new ConnectException("While sending MAIL FROM command error occurred.");
+            throw new ConnectException("While sending MAIL FROM: command error occurred.");
         logger.log(Level.INFO, "MAIL FROM command sent successfully!");
     }
 
@@ -182,7 +182,7 @@ public class SmtpClient implements SendApi {
         logger.log(Level.INFO, "Send RCPT TO: command(s)...");
 
         for (int i = 0; i < to.length; i++) {
-            final String command = SmtpState.RCPT_TO.toString() + ": <" + to[i] + ">";
+            final String command = SmtpCommand.RCPT.toString() + " <" + to[i] + ">";
             writer.println(command);
             writer.flush();
             final String serverResponse = reader.readLine();
@@ -206,7 +206,7 @@ public class SmtpClient implements SendApi {
     ) throws IOException {
 
         logger.log(Level.INFO, "Send DATA command...");
-        final String dataCommand = SmtpState.DATA.toString();
+        final String dataCommand = SmtpCommand.DATA.toString();
         writer.println(dataCommand);
         writer.flush();
         final String serverDataResponse = reader.readLine();
@@ -252,7 +252,7 @@ public class SmtpClient implements SendApi {
 
     private void endConnection(PrintWriter writer, BufferedReader reader) throws IOException {
         logger.log(Level.INFO, "End connection with smtp server...");
-        final String command = SmtpState.QUIT.toString();
+        final String command = SmtpCommand.QUIT.toString();
         writer.println(command);
         writer.flush();
         final String serverReadyResponse = reader.readLine();
