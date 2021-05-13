@@ -141,22 +141,52 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     }
 
     @Override
-    public String sendAttachmentCommand(File[] recipients) throws IOException {
-//        final File file = new File("C:/Users/barto/Pictures/2017-lexus-lc-500.jpg");
-//        byte[] fileBytesParsed = Files.readAllBytes(file.toPath());
-//        final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
-//        String command = "Attachment Test MIME-Version: 1.0 Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq --KkK170891tpbkKk__FV_KKKkkkjjwq Content-Type:application/octet-stream;name=picture.jpg Content-Transfer-Encoding:base64 Content-Disposition:attachment;filename=picture.jpg";
-//        command = command.concat(encodedFile);
-//        command = command.concat("--KkK170891tpbkKk__FV_KKKkkkjjwq--");
-//        sendCommand(command);
-//
-//        String serverResponse = "";
-//        serverResponse = reader.readLine();
-//        logger.log(Level.INFO, serverResponse);
-//        if (!serverResponse.startsWith("250") && !serverResponse.startsWith("251"))
-//            throw new ConnectException("While sending attachment: command error occurred.");
-//        return serverResponse;
-        return null;
+    public void sendMessageWithoutAttachmentCommand(String message) throws IOException {
+        sendCommand(message);
+        final String endAttachment = "\r\n.\r\n";
+        sendCommand(endAttachment);
+    }
+
+    @Override
+    public void sendMessageWithAttachmentCommand(String message, File[] files) throws IOException {
+
+        final String carriageReturn = "\r\n";
+
+        StringBuilder command = new StringBuilder();
+        command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
+                .append(carriageReturn)
+                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
+                .append(carriageReturn)
+                //plain text message
+                .append("Content-Disposition: form-data; name=description")
+                .append(carriageReturn)
+                .append(message)
+                .append(carriageReturn);
+
+        for(File file : files){
+            byte[] fileBytesParsed = Files.readAllBytes(file.toPath());
+            final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
+            command.append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
+                    .append(carriageReturn)
+                    .append("Content-Type:application/octet-stream;name=picture.jpg ")
+                    .append(carriageReturn)
+                    .append("Content-Transfer-Encoding:base64 ")
+                    .append(carriageReturn)
+                    .append("Content-Disposition:attachment;filename=picture.jpg")
+                    .append(carriageReturn)
+                    .append(encodedFile)
+                    .append(carriageReturn);
+        }
+
+        command.append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
+                .append(carriageReturn);
+
+        sendCommand(command.toString());
+
+        final String endAttachment = "\r\n.\r\n";
+        sendCommand(endAttachment);
+
+        logger.log(Level.INFO, "Message with attachment sent successfully!");
     }
 
 
@@ -211,42 +241,13 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
         }
 
         //main message
-        //sendCommand(message);
+        //send message with or without attachment
+        if(attachFiles != null){
+            sendMessageWithAttachmentCommand(message, attachFiles);
+        } else {
+            sendMessageWithoutAttachmentCommand(message);
+        }
 
-        final String endMessage = "\r\n.\r\n";
-        //sendCommand(endMessage);
-
-        final String carriageReturn = "\r\n";
-
-        final File file = attachFiles[0];//new File("C:/Users/barto/Downloads/cat.jpg");
-        byte[] fileBytesParsed = Files.readAllBytes(file.toPath());
-        String fileBytesParsedUTF8 =  new String(fileBytesParsed, StandardCharsets.UTF_8);
-        System.out.println(fileBytesParsed);
-        System.out.println(fileBytesParsedUTF8);
-        final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
-//        System.out.println(encodedFile);
-        //String command = "MIME-Version: 1.0" +
-                String command = "Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq" +
-                        carriageReturn + "--KkK170891tpbkKk__FV_KKKkkkjjwq" +
-                        carriageReturn + "Content-Disposition: form-data; name=description" +
-                        carriageReturn + message +
-                        carriageReturn + "--KkK170891tpbkKk__FV_KKKkkkjjwq" +
-                        carriageReturn + "Content-Type:application/octet-stream;name=picture.jpg " +
-                carriageReturn + "Content-Transfer-Encoding:base64 " +
-                carriageReturn + "Content-Disposition:attachment;filename=picture.jpg";
-        command = command.concat(carriageReturn);
-        command = command.concat(encodedFile);
-        command = command.concat(carriageReturn);
-        command = command.concat("--KkK170891tpbkKk__FV_KKKkkkjjwq--");
-        command = command.concat(carriageReturn);
-        //String command = encodedFile;
-        System.out.println(command);
-        sendCommand(command);
-
-
-
-        final String endAttachment = "\r\n.\r\n";
-        sendCommand(endAttachment);
 
         final String finalServerResponse = reader.readLine();
         logger.log(Level.INFO, finalServerResponse);
