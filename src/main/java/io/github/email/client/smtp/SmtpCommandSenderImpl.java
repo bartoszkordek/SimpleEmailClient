@@ -142,9 +142,19 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
 
     @Override
     public void sendMessageWithoutAttachmentCommand(String message) throws IOException {
-        sendCommand(message);
-        final String endAttachment = "\r\n.\r\n";
-        sendCommand(endAttachment);
+        final String carriageReturn = "\r\n";
+
+        StringBuilder command = new StringBuilder();
+        command.append("Content-Transfer-Encoding: quoted-printable")
+                .append(carriageReturn)
+                .append("Content-Type:text/html; charset=UTF-8")
+                .append(carriageReturn)
+                .append(message)
+                .append(carriageReturn);
+
+        sendCommand(command.toString());
+
+        logger.log(Level.INFO, "Message without attachment sent successfully!");
     }
 
     @Override
@@ -182,9 +192,6 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
                 .append(carriageReturn);
 
         sendCommand(command.toString());
-
-        final String endAttachment = "\r\n.\r\n";
-        sendCommand(endAttachment);
 
         logger.log(Level.INFO, "Message with attachment sent successfully!");
     }
@@ -248,6 +255,8 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
             sendMessageWithoutAttachmentCommand(message);
         }
 
+        final String endCommand = "\r\n.\r\n";
+        sendCommand(endCommand);
 
         final String finalServerResponse = reader.readLine();
         logger.log(Level.INFO, finalServerResponse);
