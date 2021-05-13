@@ -174,15 +174,18 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
                 .append(carriageReturn);
 
         for(File file : files){
+            String fileName = file.getName();
             byte[] fileBytesParsed = Files.readAllBytes(file.toPath());
             final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
             command.append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
                     .append(carriageReturn)
-                    .append("Content-Type:application/octet-stream;name=picture.jpg ")
+                    .append("Content-Type:application/octet-stream;name=")
+                    .append(fileName)
                     .append(carriageReturn)
                     .append("Content-Transfer-Encoding:base64 ")
                     .append(carriageReturn)
-                    .append("Content-Disposition:attachment;filename=picture.jpg")
+                    .append("Content-Disposition:attachment;filename=")
+                    .append(fileName)
                     .append(carriageReturn)
                     .append(encodedFile)
                     .append(carriageReturn);
