@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,14 +106,10 @@ public class SmtpClient implements SendApi {
             smtpCommandSender.sendEHLOCommand();
             smtpCommandSender.sendAuthCommands();
             smtpCommandSender.sendMailFromCommand();
-            // TODO: chyba powinni byś wszyscy
+
             String[] joinedAllRecipients = joinAllRecipients(to, cc, bcc);
             smtpCommandSender.sendRcptToCommand(joinedAllRecipients);
-            // TODO: bcc  - to chyba się ustala w komendzie DATA - do weryfikacji
-
-            //smtpCommandSender.sendAttachmentCommand(null);
             smtpCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
-            // TODO: attachedFiles  - to chyba się ustala w komendzie DATA, i chyba trzeba zakodować Base64 - do weryfikacji
             smtpCommandSender.sendQuitCommand();
 
         } catch (Exception e) {
