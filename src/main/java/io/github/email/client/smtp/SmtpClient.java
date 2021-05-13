@@ -6,18 +6,14 @@ import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
 
 import javax.mail.MessagingException;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +27,25 @@ public class SmtpClient implements SendApi {
 
     public SmtpClient(boolean debug) {
         this.debug = debug;
+    }
+
+    //for sending message to all recipients, to, cc, bcc flags are determined sepately
+    private String[] joinAllRecipients(String[] to, String[] cc){
+
+        String[] joinedRecipients;
+
+        int toLen = 0;
+        int ccLen = 0;
+        if(to != null && !to.toString().isEmpty()) toLen = to.length;
+        if(cc != null && !cc.toString().isEmpty()) ccLen = cc.length;
+
+        joinedRecipients = new String[toLen + ccLen];
+        if(to != null && !to.toString().isEmpty())
+            System.arraycopy(to, 0, joinedRecipients, 0, toLen);
+        if(cc != null && !cc.toString().isEmpty())
+            System.arraycopy(cc, 0, joinedRecipients, toLen, ccLen);
+
+        return joinedRecipients;
     }
 
     @Override
@@ -83,9 +98,9 @@ public class SmtpClient implements SendApi {
             smtpCommandSender.sendEHLOCommand();
             smtpCommandSender.sendAuthCommands();
             smtpCommandSender.sendMailFromCommand();
-            // TODO: chyba powinni byś wszyscy przekazani
-            smtpCommandSender.sendRcptToCommand(to);
-            // TODO: cc  - to chyba się ustala w komendzie DATA - do weryfikacji
+            // TODO: chyba powinni byś wszyscy
+            String[] joinedAllRecipients = joinAllRecipients(to, cc);
+            smtpCommandSender.sendRcptToCommand(joinedAllRecipients);
             // TODO: bcc  - to chyba się ustala w komendzie DATA - do weryfikacji
             smtpCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
             // TODO: attachedFiles  - to chyba się ustala w komendzie DATA, i chyba trzeba zakodować Base64 - do weryfikacji

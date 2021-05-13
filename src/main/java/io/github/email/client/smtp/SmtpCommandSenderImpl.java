@@ -167,9 +167,19 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
         final String subjectCommand = "Subject: " + subject;
         sendCommand(subjectCommand);
 
-        for (String recipient : to) {
-            final String toCommand = "To: " + recipient;
-            sendCommand(toCommand);
+        if(to != null && !to.toString().isEmpty()){
+            for (String recipient : to) {
+                final String toCommand = "to: " + recipient;
+                sendCommand(toCommand);
+            }
+        }
+
+
+        if(cc != null && !cc.toString().isEmpty()) {
+            for (String recipient : cc) {
+                final String toCommand = "cc: " + recipient;
+                sendCommand(toCommand);
+            }
         }
 
         //main message
