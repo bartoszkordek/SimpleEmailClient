@@ -182,6 +182,13 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
             }
         }
 
+        if(bcc != null && !bcc.toString().isEmpty()) {
+            for (String recipient : bcc) {
+                final String toCommand = "bcc: " + recipient;
+                sendCommand(toCommand);
+            }
+        }
+
         //main message
         sendCommand(message);
 

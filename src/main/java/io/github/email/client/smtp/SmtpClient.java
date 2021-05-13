@@ -30,20 +30,29 @@ public class SmtpClient implements SendApi {
     }
 
     //for sending message to all recipients, to, cc, bcc flags are determined sepately
-    private String[] joinAllRecipients(String[] to, String[] cc){
+    private String[] joinAllRecipients(String[] to, String[] cc, String[] bcc){
 
         String[] joinedRecipients;
 
         int toLen = 0;
         int ccLen = 0;
+        int bccLen = 0;
         if(to != null && !to.toString().isEmpty()) toLen = to.length;
         if(cc != null && !cc.toString().isEmpty()) ccLen = cc.length;
+        if(bcc != null && !bcc.toString().isEmpty()) bccLen = bcc.length;
 
-        joinedRecipients = new String[toLen + ccLen];
+        joinedRecipients = new String[toLen + ccLen + bccLen];
         if(to != null && !to.toString().isEmpty())
             System.arraycopy(to, 0, joinedRecipients, 0, toLen);
         if(cc != null && !cc.toString().isEmpty())
             System.arraycopy(cc, 0, joinedRecipients, toLen, ccLen);
+        if(bcc != null && !bcc.toString().isEmpty()){
+            if(cc != null && !cc.toString().isEmpty()){
+                System.arraycopy(bcc, 0, joinedRecipients, toLen + ccLen, bccLen);
+            } else {
+                System.arraycopy(bcc, 0, joinedRecipients, toLen, bccLen);
+            }
+        }
 
         return joinedRecipients;
     }
@@ -99,7 +108,7 @@ public class SmtpClient implements SendApi {
             smtpCommandSender.sendAuthCommands();
             smtpCommandSender.sendMailFromCommand();
             // TODO: chyba powinni byś wszyscy
-            String[] joinedAllRecipients = joinAllRecipients(to, cc);
+            String[] joinedAllRecipients = joinAllRecipients(to, cc, bcc);
             smtpCommandSender.sendRcptToCommand(joinedAllRecipients);
             // TODO: bcc  - to chyba się ustala w komendzie DATA - do weryfikacji
             smtpCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
