@@ -111,6 +111,8 @@ public class SmtpClient implements SendApi {
             String[] joinedAllRecipients = joinAllRecipients(to, cc, bcc);
             smtpCommandSender.sendRcptToCommand(joinedAllRecipients);
             // TODO: bcc  - to chyba się ustala w komendzie DATA - do weryfikacji
+
+            //smtpCommandSender.sendAttachmentCommand(null);
             smtpCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
             // TODO: attachedFiles  - to chyba się ustala w komendzie DATA, i chyba trzeba zakodować Base64 - do weryfikacji
             smtpCommandSender.sendQuitCommand();

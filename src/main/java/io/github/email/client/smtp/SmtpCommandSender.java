@@ -17,6 +17,8 @@ public interface SmtpCommandSender {
 
     String sendRcptToCommand(String[] recipients) throws IOException;
 
+    String sendAttachmentCommand(File[] recipients) throws IOException;
+
     String sendDataCommand(
             String[] to,
             String[] cc,
