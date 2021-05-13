@@ -167,8 +167,12 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
                 .append(carriageReturn)
                 .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
                 .append(carriageReturn)
-                //plain text message
+                //plain/html text message
                 .append("Content-Disposition: form-data; name=description")
+                .append(carriageReturn)
+                .append("Content-Transfer-Encoding: quoted-printable")
+                .append(carriageReturn)
+                .append("Content-Type:text/html; charset=UTF-8")
                 .append(carriageReturn)
                 .append(message)
                 .append(carriageReturn);
