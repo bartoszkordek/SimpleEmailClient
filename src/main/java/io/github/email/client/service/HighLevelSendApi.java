@@ -23,7 +23,6 @@ public class HighLevelSendApi implements SendApi {
 	public void sendEmail(Properties configProperties, String[] to, String[] cc, String[] bcc,
 						  String subject, String message, File[] attachFiles) throws MessagingException, IOException {
 
-		System.out.println("HHigh level ello");
 		final String userName = configProperties.getProperty("mail.user");
 		final String password = configProperties.getProperty("mail.password");
 

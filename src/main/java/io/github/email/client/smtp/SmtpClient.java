@@ -1,17 +1,23 @@
 package io.github.email.client.smtp;
 
+import io.github.email.client.service.SSLDisable;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
 
 import javax.mail.MessagingException;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +50,13 @@ public class SmtpClient implements SendApi {
         String host = properties.getSmtpHost();
         int port = 465;// properties.getSmtpPort();
 
+        configProperties.put("mail.smtp.ssl.trust", configProperties.getProperty("mail.smtp.host")); //trust Host
         setUpAdditionalProperties(configProperties);
+
+
+        //disable SSL in case of PKIX path validation issues
+        SSLDisable sslDisable = new SSLDisable();
+
 
         // TODO: połączenie SSL, teraz jest nieszyfrowane
 //        SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
