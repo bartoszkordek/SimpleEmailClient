@@ -1,14 +1,11 @@
 package io.github.email.client.imap;
 
 import io.github.email.client.service.ReceiveApi;
-import io.github.email.client.service.SSLDisable;
+import io.github.email.client.service.SSLDisableChecking;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
 
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,10 +13,6 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -50,8 +43,8 @@ public class ImapClient implements ReceiveApi {
         String password = properties.getProperty("mail.password");
         properties.put("mail.imap.ssl.trust", properties.getProperty("mail.imap.host")); //trust Host
 
-        //disable SSL in case of PKIX path validation issues
-        SSLDisable sslDisable = new SSLDisable();
+        //disable SSL checking in case of PKIX path validation issues
+        SSLDisableChecking sslDisableChecking = new SSLDisableChecking();
 
         try (Socket socket = SSLSocketFactory.getDefault().createSocket()) {
             socket.connect(new InetSocketAddress(host, Integer.parseInt(port)), 5 * 1000);

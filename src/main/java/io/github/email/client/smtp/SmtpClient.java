@@ -1,6 +1,6 @@
 package io.github.email.client.smtp;
 
-import io.github.email.client.service.SSLDisable;
+import io.github.email.client.service.SSLDisableChecking;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
@@ -77,8 +77,8 @@ public class SmtpClient implements SendApi {
         setUpAdditionalProperties(configProperties);
 
 
-        //disable SSL in case of PKIX path validation issues
-        SSLDisable sslDisable = new SSLDisable();
+        //disable SSL checking in case of PKIX path validation issues
+        SSLDisableChecking sslDisableChecking = new SSLDisableChecking();
 
 
         // TODO: połączenie SSL, teraz jest nieszyfrowane

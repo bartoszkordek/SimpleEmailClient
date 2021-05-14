@@ -22,6 +22,8 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
 
     private final Logger logger = Logger.getLogger(SmtpCommandSenderImpl.class.getName());
 
+    private final File footerFile = new File("images/cat.jpg");
+
     public SmtpCommandSenderImpl(
             PrintWriter writer,
             BufferedReader reader,
@@ -141,15 +143,57 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     }
 
     @Override
-    public void sendMessageWithoutAttachmentCommand(String message) throws IOException {
+    public void sendMessageWithoutAttachmentCommand(String message, File footerImage) throws IOException {
         final String carriageReturn = "\r\n";
 
+        String fileName = footerImage.getName();
+        byte[] fileBytesParsed = Files.readAllBytes(footerImage.toPath());
+        final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
+
         StringBuilder command = new StringBuilder();
-        command.append("Content-Transfer-Encoding: quoted-printable")
+        command.append("MIME-Version: 1.0")
                 .append(carriageReturn)
-                .append("Content-Type:text/html; charset=UTF-8")
+                .append("Content-Type:multipart/mixed; boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
                 .append(carriageReturn)
+                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
+                .append(carriageReturn)
+                .append("Content-Type: text/html; charset=utf-8")
+                .append(carriageReturn)
+                .append("Content-Transfer-Encoding: 8bit")
+                .append(carriageReturn)
+                .append("<!DOCTYPE html>\n" +
+                        "<html>\n" +
+                        "    <head>\n" +
+                        "        <meta charset=\"utf-8\">\n" +
+                        "        <title></title>\n" +
+                        "    </head>\n" +
+                        "    <body>\n" +
+                        "        <p>test</p>\n")
                 .append(message)
+                .append(
+                        "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
+                                "    </body>\n" +
+                                "</html>")
+                .append(carriageReturn)
+                .append(carriageReturn)
+                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
+                .append(carriageReturn)
+                .append("Content-Type: image/jpg; name=cat.jpg")
+                .append(carriageReturn)
+                .append("Content-Disposition: form-data; name=myFile; filename=cat.jpg")
+                .append(carriageReturn)
+                .append("Content-Location: cat.jpg")
+                .append(carriageReturn)
+                .append("Content-ID: <0123456789>")
+                .append(carriageReturn)
+                .append("Content-Transfer-Encoding: base64")
+                .append(carriageReturn)
+                .append(carriageReturn)
+                .append(encodedFile)
+                .append(carriageReturn)
+                .append(carriageReturn)
+                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
+//                .append(carriageReturn)
                 .append(carriageReturn);
 
         sendCommand(command.toString());
@@ -158,9 +202,13 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     }
 
     @Override
-    public void sendMessageWithAttachmentCommand(String message, File[] files) throws IOException {
+    public void sendMessageWithAttachmentCommand(String message, File[] files, File footerImage) throws IOException {
 
         final String carriageReturn = "\r\n";
+
+        String footerFileName = footerImage.getName();
+        byte[] footerFileBytesParsed = Files.readAllBytes(footerImage.toPath());
+        final String footerEncodedFile = Base64.getEncoder().encodeToString(footerFileBytesParsed);
 
         StringBuilder command = new StringBuilder();
         command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
@@ -173,8 +221,40 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
                 .append("Content-Transfer-Encoding: quoted-printable")
                 .append(carriageReturn)
                 .append("Content-Type:text/html; charset=UTF-8")
+                .append("Content-Type: text/html; charset=utf-8")
                 .append(carriageReturn)
+                .append("Content-Transfer-Encoding: 8bit")
+                .append(carriageReturn)
+                .append("<!DOCTYPE html>\n" +
+                        "<html>\n" +
+                        "    <head>\n" +
+                        "        <meta charset=\"utf-8\">\n" +
+                        "        <title></title>\n" +
+                        "    </head>\n" +
+                        "    <body>\n" +
+                        "        <p>test</p>\n")
                 .append(message)
+                .append(
+                        "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
+                        "    </body>\n" +
+                        "</html>")
+                .append(carriageReturn)
+                .append(carriageReturn)
+                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
+                .append(carriageReturn)
+                .append("Content-Type: image/jpg; name=cat.jpg")
+                .append(carriageReturn)
+                .append("Content-Disposition: form-data; name=myFile; filename=cat.jpg")
+                .append(carriageReturn)
+                .append("Content-Location: cat.jpg")
+                .append(carriageReturn)
+                .append("Content-ID: <0123456789>")
+                .append(carriageReturn)
+                .append("Content-Transfer-Encoding: base64")
+                .append(carriageReturn)
+                .append(carriageReturn)
+                .append(footerEncodedFile)
+                .append(carriageReturn)
                 .append(carriageReturn);
 
         for(File file : files){
@@ -254,13 +334,17 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
             }
         }
 
+
         //main message
         //send message with or without attachment
         if(attachFiles != null){
-            sendMessageWithAttachmentCommand(message, attachFiles);
+            sendMessageWithAttachmentCommand(message, attachFiles, footerFile);
         } else {
-            sendMessageWithoutAttachmentCommand(message);
+            sendMessageWithoutAttachmentCommand(message, footerFile);
         }
+
+        //footer
+        //sendFooter();
 
         final String endCommand = "\r\n.\r\n";
         sendCommand(endCommand);
