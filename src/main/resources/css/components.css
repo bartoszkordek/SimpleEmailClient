@@ -6,3 +6,17 @@
     -fx-pref-width: 200;
     -fx-text-fill: WHITE;
 }
+
+.text-field {
+    -fx-max-width: 300;
+}
+
+.jfx-text-field, .jfx-password-field {
+    -fx-background-color: WHITE;
+    -fx-font-weight: BOLD;
+    -fx-prompt-text-fill: #808080;
+    -fx-alignment: top-left;
+    -jfx-focus-color: #4059A9;
+    -jfx-unfocus-color: #4d4d4d;
+    -fx-max-width: 300;
+}
