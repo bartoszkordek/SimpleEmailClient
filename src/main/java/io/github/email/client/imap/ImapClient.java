@@ -1,6 +1,7 @@
 package io.github.email.client.imap;
 
 import io.github.email.client.service.ReceiveApi;
+import io.github.email.client.service.SSLDisableChecking;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
 
@@ -41,6 +42,10 @@ public class ImapClient implements ReceiveApi {
         String user = properties.getProperty("mail.user");
         String password = properties.getProperty("mail.password");
         properties.put("mail.imap.ssl.trust", properties.getProperty("mail.imap.host")); //trust Host
+
+        //disable SSL checking in case of PKIX path validation issues
+        SSLDisableChecking sslDisableChecking = new SSLDisableChecking();
+
         try (Socket socket = SSLSocketFactory.getDefault().createSocket()) {
             socket.connect(new InetSocketAddress(host, Integer.parseInt(port)), 5 * 1000);
             try (PrintWriter writer = new PrintWriter(socket.getOutputStream());

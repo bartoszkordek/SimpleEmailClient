@@ -1,5 +1,6 @@
 package io.github.email.client.smtp;
 
+import io.github.email.client.service.SSLDisableChecking;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
@@ -27,6 +28,34 @@ public class SmtpClient implements SendApi {
         this.debug = debug;
     }
 
+    //for sending message to all recipients, to, cc, bcc flags are determined sepately
+    private String[] joinAllRecipients(String[] to, String[] cc, String[] bcc){
+
+        String[] joinedRecipients;
+
+        int toLen = 0;
+        int ccLen = 0;
+        int bccLen = 0;
+        if(to != null && !to.toString().isEmpty()) toLen = to.length;
+        if(cc != null && !cc.toString().isEmpty()) ccLen = cc.length;
+        if(bcc != null && !bcc.toString().isEmpty()) bccLen = bcc.length;
+
+        joinedRecipients = new String[toLen + ccLen + bccLen];
+        if(to != null && !to.toString().isEmpty())
+            System.arraycopy(to, 0, joinedRecipients, 0, toLen);
+        if(cc != null && !cc.toString().isEmpty())
+            System.arraycopy(cc, 0, joinedRecipients, toLen, ccLen);
+        if(bcc != null && !bcc.toString().isEmpty()){
+            if(cc != null && !cc.toString().isEmpty()){
+                System.arraycopy(bcc, 0, joinedRecipients, toLen + ccLen, bccLen);
+            } else {
+                System.arraycopy(bcc, 0, joinedRecipients, toLen, bccLen);
+            }
+        }
+
+        return joinedRecipients;
+    }
+
     @Override
     public void sendEmail(
             Properties configProperties,
@@ -44,7 +73,13 @@ public class SmtpClient implements SendApi {
         String host = properties.getSmtpHost();
         int port = 465;// properties.getSmtpPort();
 
+        configProperties.put("mail.smtp.ssl.trust", configProperties.getProperty("mail.smtp.host")); //trust Host
         setUpAdditionalProperties(configProperties);
+
+
+        //disable SSL checking in case of PKIX path validation issues
+        SSLDisableChecking sslDisableChecking = new SSLDisableChecking();
+
 
         // TODO: połączenie SSL, teraz jest nieszyfrowane
 //        SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
@@ -71,12 +106,10 @@ public class SmtpClient implements SendApi {
             smtpCommandSender.sendEHLOCommand();
             smtpCommandSender.sendAuthCommands();
             smtpCommandSender.sendMailFromCommand();
-            // TODO: chyba powinni byś wszyscy przekazani
-            smtpCommandSender.sendRcptToCommand(to);
-            // TODO: cc  - to chyba się ustala w komendzie DATA - do weryfikacji
-            // TODO: bcc  - to chyba się ustala w komendzie DATA - do weryfikacji
+
+            String[] joinedAllRecipients = joinAllRecipients(to, cc, bcc);
+            smtpCommandSender.sendRcptToCommand(joinedAllRecipients);
             smtpCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
-            // TODO: attachedFiles  - to chyba się ustala w komendzie DATA, i chyba trzeba zakodować Base64 - do weryfikacji
             smtpCommandSender.sendQuitCommand();
 
         } catch (Exception e) {
