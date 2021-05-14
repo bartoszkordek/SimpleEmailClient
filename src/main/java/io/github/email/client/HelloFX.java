@@ -1,9 +1,9 @@
 package io.github.email.client;
 
-import io.github.email.client.ui.MainScene;
-import io.github.email.client.ui.tabs.GetEmailsTab;
-import io.github.email.client.ui.tabs.SendEmailTab;
-import io.github.email.client.ui.tabs.SettingsTab;
+import io.github.email.client.ui.scenes.MainScene;
+import io.github.email.client.ui.components.tabs.GetEmailsTab;
+import io.github.email.client.ui.components.tabs.SendEmailTab;
+import io.github.email.client.ui.components.tabs.SettingsTab;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;

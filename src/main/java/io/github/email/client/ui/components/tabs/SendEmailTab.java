@@ -1,19 +1,19 @@
-package io.github.email.client.ui.tabs;
+package io.github.email.client.ui.components.tabs;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.FlowPane;
 
-public class GetEmailsTab extends Tab {
+public class SendEmailTab extends Tab {
 
-    public GetEmailsTab() {
+    public SendEmailTab() {
         this.setClosable(false);
         this.setText("Send email");
-        this.setContent(getEmailsContent());
+        this.setContent(getEmailContent());
     }
 
-    private Node getEmailsContent() {
+    private Node getEmailContent() {
         FlowPane main = new FlowPane();
 
         JFXButton jfoenixButton = new JFXButton("Send");
@@ -22,4 +22,5 @@ public class GetEmailsTab extends Tab {
         main.getChildren().add(jfoenixButton);
         return main;
     }
+
 }

@@ -1,4 +1,4 @@
-package io.github.email.client.ui;
+package io.github.email.client.ui.scenes;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
