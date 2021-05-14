@@ -167,8 +167,7 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
                         "        <meta charset=\"utf-8\">\n" +
                         "        <title></title>\n" +
                         "    </head>\n" +
-                        "    <body>\n" +
-                        "        <p>test</p>\n")
+                        "    <body>\n")
                 .append(message)
                 .append(
                         "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
@@ -231,8 +230,7 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
                         "        <meta charset=\"utf-8\">\n" +
                         "        <title></title>\n" +
                         "    </head>\n" +
-                        "    <body>\n" +
-                        "        <p>test</p>\n")
+                        "    <body>\n")
                 .append(message)
                 .append(
                         "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
