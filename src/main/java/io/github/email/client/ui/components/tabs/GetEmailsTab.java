@@ -9,14 +9,14 @@ public class GetEmailsTab extends Tab {
 
     public GetEmailsTab() {
         this.setClosable(false);
-        this.setText("Send email");
+        this.setText("Get emails");
         this.setContent(getEmailsContent());
     }
 
     private Node getEmailsContent() {
         FlowPane main = new FlowPane();
 
-        JFXButton jfoenixButton = new JFXButton("Send");
+        JFXButton jfoenixButton = new JFXButton("Get emails");
         jfoenixButton.getStyleClass().add("button-raised");
 
         main.getChildren().add(jfoenixButton);
