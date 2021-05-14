@@ -4,6 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.HTMLEditor;
 
 public class SendEmailTab extends Tab {
 
@@ -15,12 +17,19 @@ public class SendEmailTab extends Tab {
 
     private Node getEmailContent() {
         FlowPane main = new FlowPane();
+        VBox vBox = new VBox();
+
+        HTMLEditor htmlEditor = new HTMLEditor();
 
         JFXButton jfoenixButton = new JFXButton("Send");
         jfoenixButton.getStyleClass().add("button-raised");
 
+
         main.getChildren().add(jfoenixButton);
-        return main;
+
+        vBox.getChildren().add(htmlEditor);
+        vBox.getChildren().add(jfoenixButton);
+        return vBox;
     }
 
 }
