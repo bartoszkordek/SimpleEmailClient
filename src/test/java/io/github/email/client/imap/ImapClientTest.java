@@ -14,7 +14,7 @@ class ImapClientTest {
 
     @BeforeEach
     void setUp() {
-        imapClient = new ImapClient(true);
+        imapClient = new ImapClient();
         configService = new ConfigService();
     }
 

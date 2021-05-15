@@ -24,7 +24,7 @@ import java.util.Properties;
 public class MainScreen extends JFrame {
     private final ConfigService configUtil = new ConfigService();
     private final SendApi sendApi = new SmtpClient();
-    private final ReceiveApi receiveApi = new ImapClient(true);
+    private final ReceiveApi receiveApi = new ImapClient();
     private final JMenuBar menuBar = new JMenuBar();
     private final JButton sendButton = new JButton("Send email");
     private final JButton settingsButton = new JButton("Settings");

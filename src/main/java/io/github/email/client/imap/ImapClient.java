@@ -2,8 +2,11 @@ package io.github.email.client.imap;
 
 import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SSLUtils;
+import io.github.email.client.smtp.SmtpClient;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
@@ -25,15 +28,8 @@ import java.util.stream.Collectors;
 
 public class ImapClient implements ReceiveApi {
     private long commandCounter = 1;
-    private final boolean debug;
     private final BodyStructureParser bodyStructureParser = new BodyStructureParser();
-
-    public ImapClient() {
-        this(false);
-    }
-    public ImapClient(boolean debug) {
-        this.debug = debug;
-    }
+    private final Logger logger = LoggerFactory.getLogger(ImapClient.class);
 
     @Override
     public List<MailMetadata> downloadEmails(Properties properties, int limit) {
@@ -50,8 +46,9 @@ public class ImapClient implements ReceiveApi {
             socket.connect(new InetSocketAddress(host, Integer.parseInt(port)), 5 * 1000);
             try (PrintWriter writer = new PrintWriter(socket.getOutputStream());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                logger.debug("Connection to server established");
                 // Hello from server
-                System.out.println(reader.readLine());
+                logger.debug(reader.readLine());
                 // Login
                 login(writer, reader, user, password);
                 selectInbox(writer, reader);
@@ -60,7 +57,7 @@ public class ImapClient implements ReceiveApi {
                 for (int i = 0; i < Math.min(limit, mailIds.size()); i++) {
                     int mailId = mailIds.get(i);
                     MailMetadata mailMetadata = fetchMetadata(writer, reader, mailId);
-                    System.out.println(i + ". email downloaded (low level API - using IMAP directly)");
+                    logger.info(i + ". email downloaded using IMAP");
                     mailMetadatas.add(mailMetadata);
                 }
                 return mailMetadatas;
@@ -213,21 +210,17 @@ public class ImapClient implements ReceiveApi {
             }
         }
         CommandResponse response = new CommandResponse(responseLines, confirmation);
-        if (debug) {
-            printDebugInfo(response, commandSent);
-        }
+        printDebugInfo(response, commandSent);
         commandCounter++;
         return response;
     }
 
     private void printDebugInfo(CommandResponse response, String command) {
-        System.out.println();
-        System.out.println("############|-START-|############");
-        System.out.println(command);
-        response.getLines().forEach(System.out::println);
-        System.out.println(response.getConfirmation());
-        System.out.println("#############|-END-|#############");
-        System.out.println();
+        logger.debug("Sending command: " + command);
+        logger.debug("Response from server:");
+        response.getLines().forEach(logger::debug);
+        logger.debug("Response code from server:");
+        logger.debug(response.getConfirmation());
     }
 
     private String getCounter() {
