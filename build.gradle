@@ -11,12 +11,10 @@ test {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
 dependencies {
-    implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
     implementation group: 'com.github.spotbugs', name: 'spotbugs', version: '4.2.3'
     implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '2.0.0-alpha1'

@@ -21,92 +21,15 @@ import static org.mockito.Mockito.when;
 class SmtpSSLCommandSenderTest {
 
     private SmtpSSLCommandSender smtpSSLCommandSender;
-    private PrintWriter writer;
     private BufferedReader reader;
     private PropertiesLoader properties;
 
     @BeforeEach
     void setUp() {
-        writer = mock(PrintWriter.class);
+        PrintWriter writer = mock(PrintWriter.class);
         reader = mock(BufferedReader.class);
         properties = mock(PropertiesLoaderImpl.class);
         smtpSSLCommandSender = new SmtpSSLCommandSenderImpl(writer, reader, properties);
-    }
-
-    @Nested
-    class WhenConnectionEstablished {
-
-        @Test
-        void shouldReturnResponse220WhenConnectionEstablished() throws IOException {
-            when(reader.readLine()).thenReturn("220 connection established");
-            assertThat(smtpSSLCommandSender.connectionEstablished()).startsWith("220");
-        }
-
-        @Test
-        void shouldReturnThrowExceptionWhenNoConnectionEstablished() throws IOException {
-            when(reader.readLine()).thenReturn("554 no connection established");
-            assertThatThrownBy(
-                    () -> smtpSSLCommandSender.connectionEstablished()
-            ).isInstanceOf(ConnectException.class)
-                    .hasMessage("While sending HELO command error occurred.");
-        }
-    }
-
-    @Nested
-    class WhenSendHelloCommand {
-        @Test
-        void shouldReturnResponse250WhenServerRespondToHelloCmd() throws IOException {
-            when(properties.getSmtpHost()).thenReturn("smtp.gmail.com");
-            when(reader.readLine()).thenReturn("250 helo response");
-            assertThat(smtpSSLCommandSender.sendHELOCommand()).startsWith("250");
-        }
-
-        @Test
-        void shouldReturnThrowExceptionWhen504HeloResponse() throws IOException {
-            when(reader.readLine()).thenReturn("504 error helo response");
-            assertThatThrownBy(
-                    () -> smtpSSLCommandSender.sendHELOCommand()
-            ).isInstanceOf(ConnectException.class)
-                    .hasMessage("While sending HELO command error occurred.");
-        }
-
-        @Test
-        void shouldReturnThrowExceptionWhen550HeloResponse() throws IOException {
-            when(reader.readLine()).thenReturn("550 error helo response");
-            assertThatThrownBy(
-                    () -> smtpSSLCommandSender.sendHELOCommand()
-            ).isInstanceOf(ConnectException.class)
-                    .hasMessage("While sending HELO command error occurred.");
-        }
-    }
-
-    @Nested
-    class WhenSendEHLOCommand {
-
-        @Test
-        void shouldReturnResponse250WhenServerRespondToEhloCmd() throws IOException {
-            when(properties.getSmtpHost()).thenReturn("smtp.gmail.com");
-            when(reader.readLine()).thenReturn("250 elho response");
-            assertThat(smtpSSLCommandSender.sendEHLOCommand()).startsWith("250");
-        }
-
-        @Test
-        void shouldReturnThrowExceptionWhen504EhloResponse() throws IOException {
-            when(reader.readLine()).thenReturn("504 error ehlo response");
-            assertThatThrownBy(
-                    () -> smtpSSLCommandSender.sendEHLOCommand()
-            ).isInstanceOf(ConnectException.class)
-                    .hasMessage("While sending EHLO command error occurred.");
-        }
-
-        @Test
-        void shouldReturnThrowExceptionWhen550EhloResponse() throws IOException {
-            when(reader.readLine()).thenReturn("550 error ehlo response");
-            assertThatThrownBy(
-                    () -> smtpSSLCommandSender.sendEHLOCommand()
-            ).isInstanceOf(ConnectException.class)
-                    .hasMessage("While sending EHLO command error occurred.");
-        }
     }
 
     @Nested

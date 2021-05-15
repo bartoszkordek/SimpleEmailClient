@@ -45,17 +45,7 @@ public class ConfigService {
 		properties.setProperty("mail.smtp.port", smtpPort);
 		properties.setProperty("mail.user", user);
 		properties.setProperty("mail.password", pass);
-		properties.setProperty("mail.smtp.starttls.enable", "true");
-		properties.setProperty("mail.smtp.auth", "true");
-		properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
 		properties.setProperty("mail.imap.host", imapHost);
 		properties.setProperty("mail.imap.port", imapPort);
-		properties.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		properties.setProperty("mail.imap.socketFactory.fallback", "false");
-		properties.setProperty("mail.imap.socketFactory.port", "993");
-		properties.setProperty("mail.transport.protocol", "imap");
-		properties.setProperty("mail.imap.auth", "true");
-		properties.setProperty("mail.imap.ssl.checkserveridentity", "false");
-		properties.setProperty("mail.imap.ssl.trust", "*");
 	}
 }

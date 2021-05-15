@@ -9,5 +9,6 @@ public interface SmtpUnencryptedCommandSender {
     String sendHELOCommand() throws IOException;
 
     String sendEHLOCommand() throws IOException;
+
     String sendStartTlsCommand() throws IOException;
 }
