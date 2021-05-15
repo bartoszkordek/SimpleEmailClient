@@ -1,5 +1,6 @@
 package io.github.email.client.service;
 
+import javax.annotation.Nonnull;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -20,8 +21,8 @@ import java.util.Properties;
 
 public class HighLevelSendApi implements SendApi {
 
-	public void sendEmail(Properties configProperties, String[] to, String[] cc, String[] bcc,
-						  String subject, String message, File[] attachFiles) throws MessagingException, IOException {
+	public void sendEmail(@Nonnull Properties configProperties, @Nonnull String[] to, @Nonnull String[] cc, @Nonnull String[] bcc,
+						  @Nonnull String subject, @Nonnull String message, @Nonnull File[] attachFiles) throws MessagingException, IOException {
 
 		final String userName = configProperties.getProperty("mail.user");
 		final String password = configProperties.getProperty("mail.password");

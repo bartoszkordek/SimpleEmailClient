@@ -18,7 +18,7 @@ class SmtpClientTest {
 
     @BeforeEach
     void setUp() {
-        smtpClient = new SmtpClient(true);
+        smtpClient = new SmtpClient();
         configService = new ConfigService();
     }
 

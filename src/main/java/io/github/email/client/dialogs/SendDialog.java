@@ -79,17 +79,17 @@ public class SendDialog extends JDialog {
         }
 
         String[] toAddresses = fieldTo.getText().split(",");
-        String[] ccAddresses = null;
+        String[] ccAddresses = new String[0];
         if (!fieldCc.getText().equals("")) {
             ccAddresses = fieldCc.getText().split(",");
         }
-        String[] bccAddresses = null;
+        String[] bccAddresses = new String[0];
         if (!fieldBcc.getText().equals("")) {
             bccAddresses = fieldBcc.getText().split(",");
         }
         String subject = fieldSubject.getText();
         String message = textAreaMessage.getText();
-        File[] attachFiles = null;
+        File[] attachFiles = new File[0];
         if (!fileChooser.getSelectedFilePaths().equals("")) {
             attachFiles = Arrays.stream(fileChooser.getSelectedFilePaths().split(","))
                     .map(File::new)

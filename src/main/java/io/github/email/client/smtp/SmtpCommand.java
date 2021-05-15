@@ -4,6 +4,7 @@ public enum SmtpCommand {
     AUTH_LOGIN("auth login", "auth login"),
     AUTH_PLAIN("auth plain", "auth plain"),
     DATA("data", "data"),
+    STARTTLS("starttls", "start tls"),
     HELO("helo", "hello"),
     EHLO("ehlo", "extended hello"),
     MAIL("mail from:", "mail"),

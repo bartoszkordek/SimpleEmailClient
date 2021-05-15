@@ -18,9 +18,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SmtpCommandSenderTest {
+class SmtpSSLCommandSenderTest {
 
-    private SmtpCommandSender smtpCommandSender;
+    private SmtpSSLCommandSender smtpSSLCommandSender;
     private PrintWriter writer;
     private BufferedReader reader;
     private PropertiesLoader properties;
@@ -30,7 +30,7 @@ class SmtpCommandSenderTest {
         writer = mock(PrintWriter.class);
         reader = mock(BufferedReader.class);
         properties = mock(PropertiesLoaderImpl.class);
-        smtpCommandSender = new SmtpCommandSenderImpl(writer, reader, properties, false);
+        smtpSSLCommandSender = new SmtpSSLCommandSenderImpl(writer, reader, properties);
     }
 
     @Nested
@@ -39,14 +39,14 @@ class SmtpCommandSenderTest {
         @Test
         void shouldReturnResponse220WhenConnectionEstablished() throws IOException {
             when(reader.readLine()).thenReturn("220 connection established");
-            assertThat(smtpCommandSender.connectionEstablished()).startsWith("220");
+            assertThat(smtpSSLCommandSender.connectionEstablished()).startsWith("220");
         }
 
         @Test
         void shouldReturnThrowExceptionWhenNoConnectionEstablished() throws IOException {
             when(reader.readLine()).thenReturn("554 no connection established");
             assertThatThrownBy(
-                    () -> smtpCommandSender.connectionEstablished()
+                    () -> smtpSSLCommandSender.connectionEstablished()
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending HELO command error occurred.");
         }
@@ -58,14 +58,14 @@ class SmtpCommandSenderTest {
         void shouldReturnResponse250WhenServerRespondToHelloCmd() throws IOException {
             when(properties.getSmtpHost()).thenReturn("smtp.gmail.com");
             when(reader.readLine()).thenReturn("250 helo response");
-            assertThat(smtpCommandSender.sendHelloCommand()).startsWith("250");
+            assertThat(smtpSSLCommandSender.sendHELOCommand()).startsWith("250");
         }
 
         @Test
         void shouldReturnThrowExceptionWhen504HeloResponse() throws IOException {
             when(reader.readLine()).thenReturn("504 error helo response");
             assertThatThrownBy(
-                    () -> smtpCommandSender.sendHelloCommand()
+                    () -> smtpSSLCommandSender.sendHELOCommand()
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending HELO command error occurred.");
         }
@@ -74,7 +74,7 @@ class SmtpCommandSenderTest {
         void shouldReturnThrowExceptionWhen550HeloResponse() throws IOException {
             when(reader.readLine()).thenReturn("550 error helo response");
             assertThatThrownBy(
-                    () -> smtpCommandSender.sendHelloCommand()
+                    () -> smtpSSLCommandSender.sendHELOCommand()
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending HELO command error occurred.");
         }
@@ -87,14 +87,14 @@ class SmtpCommandSenderTest {
         void shouldReturnResponse250WhenServerRespondToEhloCmd() throws IOException {
             when(properties.getSmtpHost()).thenReturn("smtp.gmail.com");
             when(reader.readLine()).thenReturn("250 elho response");
-            assertThat(smtpCommandSender.sendEHLOCommand()).startsWith("250");
+            assertThat(smtpSSLCommandSender.sendEHLOCommand()).startsWith("250");
         }
 
         @Test
         void shouldReturnThrowExceptionWhen504EhloResponse() throws IOException {
             when(reader.readLine()).thenReturn("504 error ehlo response");
             assertThatThrownBy(
-                    () -> smtpCommandSender.sendEHLOCommand()
+                    () -> smtpSSLCommandSender.sendEHLOCommand()
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending EHLO command error occurred.");
         }
@@ -103,7 +103,7 @@ class SmtpCommandSenderTest {
         void shouldReturnThrowExceptionWhen550EhloResponse() throws IOException {
             when(reader.readLine()).thenReturn("550 error ehlo response");
             assertThatThrownBy(
-                    () -> smtpCommandSender.sendEHLOCommand()
+                    () -> smtpSSLCommandSender.sendEHLOCommand()
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending EHLO command error occurred.");
         }
@@ -120,7 +120,7 @@ class SmtpCommandSenderTest {
         void shouldReturnResponse250WhenServerRespondToMailCmd() throws IOException {
             when(properties.getUser()).thenReturn("jan.kowalski@gmail.com");
             when(reader.readLine()).thenReturn("250 mail response");
-            assertThat(smtpCommandSender.sendMailFromCommand()).startsWith("250");
+            assertThat(smtpSSLCommandSender.sendMailFromCommand()).startsWith("250");
         }
 
         @ParameterizedTest
@@ -128,7 +128,7 @@ class SmtpCommandSenderTest {
         void shouldReturnThrowExceptionWhenMailResponseWithStatus(int responseStatus) throws IOException {
             when(reader.readLine()).thenReturn(responseStatus + " error mail response");
             assertThatThrownBy(
-                    () -> smtpCommandSender.sendMailFromCommand()
+                    () -> smtpSSLCommandSender.sendMailFromCommand()
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending MAIL FROM: command error occurred.");
         }
@@ -149,7 +149,7 @@ class SmtpCommandSenderTest {
         void shouldReturnResponse250WhenServerRespondToRcptCmd(int responseStatus) throws IOException {
             when(properties.getUser()).thenReturn("jan.kowalski@gmail.com");
             when(reader.readLine()).thenReturn(responseStatus + " rcpt response");
-            assertThat(smtpCommandSender.sendRcptToCommand(recipients))
+            assertThat(smtpSSLCommandSender.sendRcptToCommand(recipients))
                     .startsWith(String.valueOf(responseStatus));
         }
 
@@ -158,7 +158,7 @@ class SmtpCommandSenderTest {
         void shouldReturnThrowExceptionWhenMailResponseWithStatus(int responseStatus) throws IOException {
             when(reader.readLine()).thenReturn(responseStatus + " error mail response");
             assertThatThrownBy(
-                    () -> smtpCommandSender.sendRcptToCommand(recipients)
+                    () -> smtpSSLCommandSender.sendRcptToCommand(recipients)
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending RCPT TO: command error occurred.");
         }
@@ -174,14 +174,14 @@ class SmtpCommandSenderTest {
         @Test
         void shouldReturnResponse221WhenServerRespondToQuitCmd() throws IOException {
             when(reader.readLine()).thenReturn("221 quit response");
-            assertThat(smtpCommandSender.sendQuitCommand()).startsWith("221");
+            assertThat(smtpSSLCommandSender.sendQuitCommand()).startsWith("221");
         }
 
         @Test
         void shouldReturnThrowExceptionWhen500QuitCmd() throws IOException {
             when(reader.readLine()).thenReturn("500 error quit response");
             assertThatThrownBy(
-                    () -> smtpCommandSender.sendQuitCommand()
+                    () -> smtpSSLCommandSender.sendQuitCommand()
             ).isInstanceOf(ConnectException.class)
                     .hasMessage("While sending QUIT command error occurred.");
         }
