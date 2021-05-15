@@ -24,7 +24,7 @@ class SmtpClientTest {
 
     @Disabled
     @Test
-    void shouldSendEmail() throws MessagingException, KeyManagementException, NoSuchAlgorithmException, IOException {
+    void shouldSendEmail() {
         String[] to = new String[]{"aghproject2020@gmail.com"};
         String[] cc = new String[]{};
         String[] bcc = new String[]{};

@@ -6,9 +6,9 @@ import io.github.email.client.dialogs.SettingsDialog;
 import io.github.email.client.imap.ImapClient;
 import io.github.email.client.imap.MailMetadata;
 import io.github.email.client.service.ConfigService;
-import io.github.email.client.service.HighLevelSendApi;
 import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SendApi;
+import io.github.email.client.smtp.SmtpClient;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,9 +23,8 @@ import java.util.Properties;
 
 public class MainScreen extends JFrame {
     private final ConfigService configUtil = new ConfigService();
-    // TODO change to low level API (Grzegorz/Bartosz)
-    private final SendApi sendApi = new HighLevelSendApi();
-    private final ReceiveApi receiveApi = new ImapClient();
+    private final SendApi sendApi = new SmtpClient();
+    private final ReceiveApi receiveApi = new ImapClient(true);
     private final JMenuBar menuBar = new JMenuBar();
     private final JButton sendButton = new JButton("Send email");
     private final JButton settingsButton = new JButton("Settings");

@@ -8,10 +8,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 
-public class SSLDisableChecking {
-
-    public SSLDisableChecking(){
-
+public class SSLUtils {
+    public static void disableChecking() {
         SSLContext ctx = null;
         TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager(){
             public X509Certificate[] getAcceptedIssuers(){return null;}

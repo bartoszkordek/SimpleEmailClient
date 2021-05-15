@@ -1,18 +1,15 @@
 package io.github.email.client.smtp;
 
-import io.github.email.client.service.SSLDisableChecking;
+import io.github.email.client.service.SSLUtils;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
 
-import javax.mail.MessagingException;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +25,7 @@ public class SmtpClient implements SendApi {
         this.debug = debug;
     }
 
-    //for sending message to all recipients, to, cc, bcc flags are determined sepately
+    //for sending message to all recipients, to, cc, bcc flags are determined separately
     private String[] joinAllRecipients(String[] to, String[] cc, String[] bcc){
 
         String[] joinedRecipients;
@@ -65,21 +62,20 @@ public class SmtpClient implements SendApi {
             String subject,
             String message,
             File[] attachFiles
-    ) throws MessagingException, IOException, NoSuchAlgorithmException, KeyManagementException {
+    ) {
 
         logger.log(Level.INFO, "Start sending email...");
         PropertiesLoader properties = new PropertiesLoaderImpl(configProperties);
 
         String host = properties.getSmtpHost();
-        int port = 465;// properties.getSmtpPort();
+        int port = properties.getSmtpPort();
 
         configProperties.put("mail.smtp.ssl.trust", configProperties.getProperty("mail.smtp.host")); //trust Host
         setUpAdditionalProperties(configProperties);
 
 
         //disable SSL checking in case of PKIX path validation issues
-        SSLDisableChecking sslDisableChecking = new SSLDisableChecking();
-
+        SSLUtils.disableChecking();
 
         // TODO: połączenie SSL, teraz jest nieszyfrowane
 //        SSLContext sslContext = SSLContext.getInstance("TLSv1.2");

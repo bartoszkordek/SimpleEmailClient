@@ -50,7 +50,7 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     @Override
     public String sendHelloCommand() throws IOException {
         logger.log(Level.INFO, "Send HELO command...");
-        final String command = SmtpCommand.HELO.toString() + " " + properties.getSmtpHost();
+        final String command = SmtpCommand.HELO + " " + properties.getSmtpHost();
         sendCommand(command);
         final String serverHelloResponse = reader.readLine();
         logger.log(Level.INFO, serverHelloResponse);
@@ -63,7 +63,7 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     @Override
     public String sendEHLOCommand() throws IOException {
         logger.log(Level.INFO, "Send EHLO command...");
-        final String command = SmtpCommand.EHLO.toString() + " " + properties.getSmtpHost();
+        final String command = SmtpCommand.EHLO + " " + properties.getSmtpHost();
         sendCommand(command);
 
         String serverEhloResponse;
@@ -114,7 +114,7 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     public String sendMailFromCommand() throws IOException {
         logger.log(Level.INFO, "Send MAIL FROM: command...");
         final String userEmail = properties.getUser();
-        final String command = SmtpCommand.MAIL.toString() + " <" + userEmail + ">";
+        final String command = SmtpCommand.MAIL + " <" + userEmail + ">";
         sendCommand(command);
         final String serverMailResponse = reader.readLine();
         logger.log(Level.INFO, serverMailResponse);
@@ -146,7 +146,6 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     public void sendMessageWithoutAttachmentCommand(String message, File footerImage) throws IOException {
         final String carriageReturn = "\r\n";
 
-        String fileName = footerImage.getName();
         byte[] fileBytesParsed = Files.readAllBytes(footerImage.toPath());
         final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
 
@@ -372,5 +371,12 @@ public class SmtpCommandSenderImpl implements SmtpCommandSender {
     private void sendCommand(String command) {
         writer.println(command);
         writer.flush();
+    }
+
+    public static void main(String[] args) {
+        String[] a = null;
+        for (String s : a) {
+            System.out.println(a);
+        }
     }
 }

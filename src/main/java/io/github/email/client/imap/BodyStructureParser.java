@@ -101,6 +101,7 @@ public class BodyStructureParser {
             String type = parts[1].substring(1, parts[1].length()-1);
             mailContentParts.add(new MailContentPart(counters.peek(), type, currToken.text));
         }
+        mailContentParts.forEach(System.out::println);
         return mailContentParts;
     }
 
