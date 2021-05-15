@@ -2,7 +2,6 @@ package io.github.email.client.imap;
 
 import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SSLUtils;
-import io.github.email.client.smtp.SmtpClient;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
 import org.slf4j.Logger;
@@ -21,6 +20,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -112,17 +112,18 @@ public class ImapClient implements ReceiveApi {
         }
         String date = "", from = "", to = "", cc = "", bcc = "", subject = "";
         for (String line : response.getLines()) {
-            if (line.startsWith("Date: ")) {
+            line = line.toLowerCase(Locale.ROOT);
+            if (line.startsWith("date: ")) {
                 date = line.substring(6);
-            } else if (line.startsWith("From: ")) {
+            } else if (line.startsWith("from: ")) {
                 from = line.substring(6);
-            } else if (line.startsWith("To: ")) {
+            } else if (line.startsWith("to: ")) {
                 to = line.substring(4);
-            } else if (line.startsWith("Cc: ")) {
+            } else if (line.startsWith("cc: ")) {
                 cc = line.substring(4);
-            } else if (line.startsWith("Bcc: ")) {
+            } else if (line.startsWith("bcc: ")) {
                 bcc = line.substring(5);
-            } else if (line.startsWith("Subject: ")) {
+            } else if (line.startsWith("subject: ")) {
                 subject = line.substring(9);
             }
         }
