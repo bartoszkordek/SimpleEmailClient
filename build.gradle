@@ -21,6 +21,7 @@ dependencies {
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
     implementation group: 'de.jensd', name: 'fontawesomefx', version: '8.9'
+    implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.2.0'
     implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.2.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
@@ -41,7 +42,7 @@ application {
 
 javafx {
     version = "11.0.2"
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web' ]
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
 }
 
 task runWithExec(type: Exec) {
