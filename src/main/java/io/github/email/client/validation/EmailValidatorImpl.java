@@ -11,10 +11,15 @@ public class EmailValidatorImpl implements EmailValidator {
     public boolean isAllEmailValid(String[] emails) {
         for (String email : emails) {
             email = email.trim();
-            boolean isAllValid = Boolean.logicalAnd(true, validator.isValid(email));
+            boolean isAllValid = Boolean.logicalAnd(true, isEmailValid(email));
             if (!isAllValid) return false;
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isEmailValid(String email) {
+        return validator.isValid(email);
     }
 }

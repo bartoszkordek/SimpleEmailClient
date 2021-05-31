@@ -45,4 +45,24 @@ class EmailValidatorTest {
         };
         assertThat(emailValidator.isAllEmailValid(testEmails)).isFalse();
     }
+
+    @Test
+    void shouldProvidedEmailBeValid() {
+        assertThat(emailValidator.isEmailValid("gzacharski@student.agh.edu.pl")).isTrue();
+    }
+
+    @Test
+    void shouldProvidedEmailBeInValid() {
+        assertThat(emailValidator.isEmailValid("gzacharskistudent.agh.edu.pl")).isFalse();
+    }
+
+    @Test
+    void shouldEmptyEmailBeInValid() {
+        assertThat(emailValidator.isEmailValid("")).isFalse();
+    }
+
+    @Test
+    void shouldNullEmailBeInValid() {
+        assertThat(emailValidator.isEmailValid(null)).isFalse();
+    }
 }
