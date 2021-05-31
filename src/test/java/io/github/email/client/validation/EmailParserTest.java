@@ -44,4 +44,23 @@ class EmailParserTest {
         assertThatThrownBy(() -> emailParser.parseEmails(emailsAsString))
                 .isInstanceOf(InvalidEmailException.class);
     }
+
+    @Test
+    void shouldReturnNullWhenNoEmailsProvided() throws InvalidEmailException {
+        String emailsAsString="";
+        assertThat(emailParser.parseEmails(emailsAsString)).isNull();
+    }
+
+    @Test
+    void shouldReturnNullWhenNoEmailsProvidedWithTrimming() throws InvalidEmailException {
+        String emailsAsString="  ";
+        assertThat(emailParser.parseEmails(emailsAsString)).isNull();
+    }
+
+    @Test
+    void shouldThrowExceptionWhenNoEmailsProvidedWithTrimming(){
+        String emailsAsString="  ;   ";
+        assertThatThrownBy(() -> emailParser.parseEmails(emailsAsString))
+                .isInstanceOf(InvalidEmailException.class);
+    }
 }

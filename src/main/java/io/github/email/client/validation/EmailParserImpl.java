@@ -8,6 +8,8 @@ public class EmailParserImpl implements EmailParser {
     @Override
     public String[] parseEmails(String emailsAsString) throws InvalidEmailException {
         String[] emails = emailsAsString.split(";");
+        if (emails.length == 1 && emails[0].trim().equals("")) return null;
+
         for (int i = 0; i < emails.length; i++) {
             emails[i] = emails[i].trim();
             boolean emailValid = emailValidator.isEmailValid(emails[i]);
