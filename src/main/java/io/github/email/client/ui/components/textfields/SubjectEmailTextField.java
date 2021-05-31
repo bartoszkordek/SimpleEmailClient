@@ -5,6 +5,7 @@ public class SubjectEmailTextField extends CustomTextField {
     public SubjectEmailTextField() {
         super();
         this.setMessage("Email subject is too long.");
+        this.getLabel().setText("Subject:");
         this.setStyle("-fx-label-float:true;-fx-pref-width: 1000");
         this.setOnKeyReleased(event -> validateSubjectLength());
     }

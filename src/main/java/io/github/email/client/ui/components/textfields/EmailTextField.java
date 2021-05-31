@@ -8,8 +8,9 @@ import java.util.Arrays;
 public class EmailTextField extends CustomTextField {
     private final EmailValidator validator;
 
-    public EmailTextField() {
+    public EmailTextField(String name) {
         this.validator = new EmailValidatorImpl();
+        this.getLabel().setText(name);
         this.setMessage("At least one email provided is invalid.");
         this.setStyle("-fx-label-float:true;-fx-pref-width: 1000");
         this.setOnKeyReleased(event -> validateTextFieldOnKeyReleased());

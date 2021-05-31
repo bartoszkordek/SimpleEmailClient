@@ -9,7 +9,7 @@ public class LabelChanger {
 
     public LabelChanger(CustomTextField customTextField) {
         this.customTextField = customTextField;
-        this.label = customTextField.getLabel();
+        this.label = customTextField.getErrorLabel();
     }
 
     public void handleLabelChange() {

@@ -1,14 +1,13 @@
 package io.github.email.client.ui.components.tabs;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
 import io.github.email.client.service.ConfigService;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.smtp.SmtpClient;
+import io.github.email.client.ui.components.gridpane.SendEmailGridPane;
 import io.github.email.client.ui.components.textfields.EmailTextField;
 import io.github.email.client.ui.components.textfields.SubjectEmailTextField;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -34,12 +33,15 @@ public class SendEmailTab extends Tab {
 
         HTMLEditor htmlEditor = new HTMLEditor();
 
-        EmailTextField toAddresses = new EmailTextField();
-        EmailTextField ccAddresses = new EmailTextField();
-        EmailTextField bccAddresses = new EmailTextField();
+        EmailTextField toAddresses = new EmailTextField("To:");
+        EmailTextField ccAddresses = new EmailTextField("CC:");
+        EmailTextField bccAddresses = new EmailTextField("Bcc:");
         SubjectEmailTextField subject = new SubjectEmailTextField();
 
-        GridPane gridPane = getEmailAddressesGridPane(toAddresses, ccAddresses, bccAddresses, subject);
+        GridPane gridPane = new SendEmailGridPane(
+                new EmailTextField[]{toAddresses, ccAddresses, bccAddresses},
+                subject
+        );
 
         vBox.getChildren().add(gridPane);
         vBox.getChildren().add(htmlEditor);
@@ -53,37 +55,6 @@ public class SendEmailTab extends Tab {
 
         vBox.getChildren().add(hBox);
         return vBox;
-    }
-
-    private GridPane getEmailAddressesGridPane(
-            EmailTextField toAddresses,
-            JFXTextField ccAddresses,
-            JFXTextField bccAddresses,
-            SubjectEmailTextField subject
-    ) {
-        GridPane gridPane = new GridPane();
-        gridPane.setVgap(10);
-        gridPane.setHgap(10);
-        gridPane.setStyle("-fx-padding: 10;");
-
-        int row = 0;
-
-        gridPane.add(new Label("To:"), 0, row);
-        gridPane.add(toAddresses, 1, row);
-        gridPane.add(toAddresses.getLabel(), 2, row);
-
-        gridPane.add(new Label("CC:"), 0, ++row);
-        gridPane.add(ccAddresses, 1, row);
-
-        gridPane.add(new Label("Bcc:"), 0, ++row);
-        gridPane.add(bccAddresses, 1, row);
-
-        gridPane.add(new Label("Subject:"), 0, ++row);
-        gridPane.add(subject, 1, row);
-        gridPane.add(subject.getLabel(), 2, row);
-
-
-        return gridPane;
     }
 
     private JFXButton getAddFileButton() {

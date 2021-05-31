@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 public class CustomTextField extends JFXTextField {
     private final LabelChanger labelChanger;
     private final Label label;
+    private final Label errorLabel;
     private String message;
     private boolean valid;
 
@@ -14,6 +15,7 @@ public class CustomTextField extends JFXTextField {
         super();
         this.valid = true;
         this.label = new Label();
+        this.errorLabel = new Label();
         this.labelChanger = new LabelChanger(this);
     }
 
@@ -27,6 +29,10 @@ public class CustomTextField extends JFXTextField {
 
     public Label getLabel() {
         return label;
+    }
+
+    public Label getErrorLabel() {
+        return errorLabel;
     }
 
     protected void handleLabelChange() {
