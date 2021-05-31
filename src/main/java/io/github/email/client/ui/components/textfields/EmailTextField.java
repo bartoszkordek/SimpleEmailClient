@@ -1,15 +1,16 @@
 package io.github.email.client.ui.components.textfields;
 
-import com.jfoenix.controls.JFXTextField;
 import io.github.email.client.validation.EmailValidator;
 import io.github.email.client.validation.EmailValidatorImpl;
 
-public class EmailTextField extends JFXTextField {
+import java.util.Arrays;
+
+public class EmailTextField extends CustomTextField {
     private final EmailValidator validator;
 
     public EmailTextField() {
-        super();
         this.validator = new EmailValidatorImpl();
+        this.setMessage("At least one email provided is invalid.");
         this.setStyle("-fx-label-float:true;-fx-pref-width: 1000");
         this.setOnKeyReleased(event -> validateTextFieldOnKeyReleased());
         this.focusedProperty().addListener((observable, oldValue, newValue) -> validateWhenNoFocused(newValue));
@@ -17,24 +18,35 @@ public class EmailTextField extends JFXTextField {
 
     private void validateWhenNoFocused(Boolean newValue) {
         if (Boolean.FALSE.equals(newValue)) {
-            String text = this.getText();
-            String[] emails = text.split(";");
-            boolean isAllValid = validator.isAllEmailValid(emails);
-            if (!isAllValid) {
-                this.setStyle("-fx-background-color: rgb(250, 160, 160)");
-            } else {
+            if (isAllEmailValid()) {
                 this.setStyle("-fx-background-color: white");
+                this.setValid(true);
+            } else {
+                this.setStyle("-fx-background-color: rgb(250, 160, 160)");
+                this.setValid(false);
             }
+            this.handleLabelChange();
         }
     }
 
-    private void validateTextFieldOnKeyReleased() {
+    private boolean isAllEmailValid() {
         String text = this.getText();
         String[] emails = text.split(";");
-        boolean isAllValid = true;
-        if (emails.length == 1 && emails[0].length() != 0) {
-            isAllValid = validator.isAllEmailValid(emails);
-        }
-        if (isAllValid) this.setStyle("-fx-background-color: white");
+        emails = trimEmails(emails);
+        if (emails.length == 1 && emails[0].length() == 0) return true;
+        return validator.isAllEmailValid(emails);
+    }
+
+    private String[] trimEmails(String[] emails) {
+        return Arrays.stream(emails)
+                .map(String::trim)
+                .toArray(String[]::new);
+    }
+
+    private void validateTextFieldOnKeyReleased() {
+        if (!isAllEmailValid()) return;
+        this.setStyle("-fx-background-color: white");
+        this.setValid(true);
+        this.handleLabelChange();
     }
 }
