@@ -17,6 +17,8 @@ public class CustomTextField extends JFXTextField {
         this.label = new Label();
         this.errorLabel = new Label();
         this.labelChanger = new LabelChanger(this);
+        this.setStyle("-fx-label-float:true");
+        this.setMinWidth(300);
     }
 
     public boolean isValid() {
