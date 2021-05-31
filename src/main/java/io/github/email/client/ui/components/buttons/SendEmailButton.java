@@ -7,6 +7,7 @@ import io.github.email.client.service.SendApi;
 import io.github.email.client.smtp.SmtpClient;
 import io.github.email.client.ui.components.textfields.EmailTextField;
 import io.github.email.client.ui.components.textfields.SubjectEmailTextField;
+import io.github.email.client.ui.stages.InvalidEmailStage;
 import io.github.email.client.validation.EmailParser;
 import io.github.email.client.validation.EmailParserImpl;
 import javafx.scene.web.HTMLEditor;
@@ -49,9 +50,13 @@ public class SendEmailButton extends JFXButton {
             String[] ccEmails = emailParser.parseEmails(ccAddresses.getText());
             String[] bccEmails = emailParser.parseEmails(bccAddresses.getText());
 
+            if (toEmails == null) throw new InvalidEmailException("You should provide at least one email");
+
             this.sendEmail(toEmails, ccEmails, bccEmails, subject.getText(), htmlEditor.getHtmlText(), attachFiles);
         } catch (InvalidEmailException exception) {
-            System.out.println("Err");
+            InvalidEmailStage emailStage = new InvalidEmailStage();
+            emailStage.show();
+            exception.printStackTrace();
         }
     }
 
