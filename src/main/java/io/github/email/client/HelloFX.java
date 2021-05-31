@@ -1,9 +1,9 @@
 package io.github.email.client;
 
-import io.github.email.client.ui.scenes.MainScene;
 import io.github.email.client.ui.components.tabs.GetEmailsTab;
 import io.github.email.client.ui.components.tabs.SendEmailTab;
 import io.github.email.client.ui.components.tabs.SettingsTab;
+import io.github.email.client.ui.scenes.MainScene;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
@@ -23,9 +23,13 @@ public class HelloFX extends Application {
         primaryStage.setTitle("Simple email client");
         primaryStage.setHeight(HEIGHT);
         primaryStage.setWidth(WIDTH);
+        primaryStage.setMinHeight(HEIGHT);
+        primaryStage.setMinWidth(WIDTH);
 
         MainScene mainScene = new MainScene(getMainSceneParent());
-        mainScene.getStylesheets().add(HelloFX.class.getResource("/css/components.css").toExternalForm());
+        mainScene.getStylesheets().add(
+                HelloFX.class.getResource("/css/components.css").toExternalForm()
+        );
         primaryStage.setScene(mainScene);
 
         primaryStage.show();
