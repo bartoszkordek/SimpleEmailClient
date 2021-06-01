@@ -8,6 +8,18 @@ public class Email {
     private String subject;
     private String date;
 
+    public Email() {
+    }
+
+    public Email(String from, String to, String cc, String bcc, String subject, String date) {
+        this.from = from;
+        this.to = to;
+        this.cc = cc;
+        this.bcc = bcc;
+        this.subject = subject;
+        this.date = date;
+    }
+
     public String getFrom() {
         return from;
     }

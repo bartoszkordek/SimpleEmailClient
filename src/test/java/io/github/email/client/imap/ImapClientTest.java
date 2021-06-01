@@ -21,7 +21,7 @@ class ImapClientTest {
     @Disabled
     @Test
     void shouldDownloadEmails() {
-        List<MailMetadata> mailMetadata = imapClient.downloadEmails(configService.getProperties(), 10);
+        List<MailMetadata> mailMetadata = imapClient.downloadEmails(configService.getProperties(), 10, null);
 
         System.out.println(mailMetadata.toString());
     }

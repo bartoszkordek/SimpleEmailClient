@@ -1,13 +1,14 @@
 package io.github.email.client.ui.components.buttons;
 
 import com.jfoenix.controls.JFXButton;
-import io.github.email.client.ui.components.tabs.Person;
 import io.github.email.client.ui.stages.ProgressBarStage;
+import io.github.email.client.util.DownloadEmails;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 
 public class GetEmailsButton extends JFXButton {
-    private TableView tableView;
+
+    private final TableView tableView;
 
     public GetEmailsButton(String text, TableView tableView) {
         super(text);
@@ -20,20 +21,11 @@ public class GetEmailsButton extends JFXButton {
         ProgressBarStage progressBarStage = new ProgressBarStage();
         progressBarStage.show();
 
-        Thread downloadEmailThread = new Thread(() -> {
-            try {
-                for (int i = 0; i < 10; i++) {
-                    tableView.getItems().add(new Person("John", "Doe"));
-                    Thread.sleep(1000);
-                    double progress = ((double) i + 1.0) / 10;
-                    progressBarStage.getProgressBar().setProgress(progress);
-                    tableView.getItems().add(new Person("Jane", "Deer"));
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        DownloadEmails downloadEmails = new DownloadEmails(
+                progressBarStage.getProgressBar(),
+                tableView
+        );
 
-        downloadEmailThread.start();
+        downloadEmails.start();
     }
 }
