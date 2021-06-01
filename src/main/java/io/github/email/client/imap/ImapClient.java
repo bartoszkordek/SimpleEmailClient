@@ -4,6 +4,7 @@ import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SSLUtils;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class ImapClient implements ReceiveApi {
     }
 
     private void login(PrintWriter writer, BufferedReader reader,
-                                  String user, String password) throws IOException {
+                       String user, String password) throws IOException {
         CommandResponse response = sendCommand(writer, reader, "LOGIN " + user + " " + password);
         if (!response.getConfirmation().contains("OK")) {
             throw new IOException("Login failed");
@@ -151,7 +152,7 @@ public class ImapClient implements ReceiveApi {
                 attachments.add(new Attachment(bodyBytes, part.getType(), getFileName(part.getTokenText())));
             } else if (part.getType().equals("PLAIN")) {
                 bodyPlain = new String(bodyBytes, StandardCharsets.UTF_8);
-            } else if (part.getType().equals("HTML")){
+            } else if (part.getType().equals("HTML")) {
                 bodyHtml = new String(bodyBytes, StandardCharsets.UTF_8);
             } // discard the rest
         }
@@ -182,12 +183,14 @@ public class ImapClient implements ReceiveApi {
             throw new IOException("Fetching body part " + partNum + " with ID " + id + " failed");
         }
         String res = String.join("\n", response.getLines().subList(1, response.getLines().size()));
-        return res.substring(0, res.length()-1);
+        return res.substring(0, res.length() - 1);
     }
 
     private CommandResponse sendCommand(PrintWriter writer, BufferedReader reader, String command) throws IOException {
         // send to server
-        String commandSent = getCounter() + " " + command + "\r";
+        String endLine = getEndCharProperForOS();
+
+        String commandSent = getCounter() + " " + command + endLine;
         writer.println(commandSent);
         writer.flush();
         // collect responses from server
@@ -214,6 +217,11 @@ public class ImapClient implements ReceiveApi {
         printDebugInfo(response, commandSent);
         commandCounter++;
         return response;
+    }
+
+    private String getEndCharProperForOS() {
+        if (SystemUtils.IS_OS_LINUX) return "\r";
+        return "";
     }
 
     private void printDebugInfo(CommandResponse response, String command) {

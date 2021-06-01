@@ -8,6 +8,9 @@ import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.GridPane;
+
+import static io.github.email.client.ui.components.background.CustomBackground.getBackground;
 
 public class SettingsTab extends Tab {
     private final ConfigService configUtil;
@@ -40,7 +43,7 @@ public class SettingsTab extends Tab {
                 configUtil
         );
 
-        return new SettingsGridPane(
+        GridPane settingsPane = new SettingsGridPane(
                 new BasicPropertyTextField[]{
                         smtpHost,
                         smtpPort,
@@ -51,5 +54,9 @@ public class SettingsTab extends Tab {
                 },
                 saveButton
         );
+
+        settingsPane.setBackground(getBackground("images/background/bg1.jpg"));
+
+        return settingsPane;
     }
 }
