@@ -11,8 +11,8 @@ import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 
 public class HelloFX extends Application {
-    private static final double HEIGHT = 480;
-    private static final double WIDTH = 640;
+    private static final double HEIGHT = 720;
+    private static final double WIDTH = 1280;
 
     public static void main(String[] args) {
         launch(args);
