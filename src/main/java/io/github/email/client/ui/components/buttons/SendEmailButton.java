@@ -17,7 +17,7 @@ import java.util.Properties;
 
 public class SendEmailButton extends JFXButton {
     private final ConfigService configUtil = new ConfigService();
-    private final SendApi smtpClient = new SmtpClient(true);
+    private final SendApi smtpClient = new SmtpClient();
 
     public SendEmailButton(
             EmailTextField toAddresses,
