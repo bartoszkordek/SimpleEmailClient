@@ -13,24 +13,20 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ImapClient implements ReceiveApi {
-    private long commandCounter = 1;
     private final boolean debug;
     private final BodyStructureParser bodyStructureParser = new BodyStructureParser();
+    private long commandCounter = 1;
 
     public ImapClient() {
         this(false);
     }
+
     public ImapClient(boolean debug) {
         this.debug = debug;
     }
@@ -72,7 +68,7 @@ public class ImapClient implements ReceiveApi {
     }
 
     private void login(PrintWriter writer, BufferedReader reader,
-                                  String user, String password) throws IOException {
+                       String user, String password) throws IOException {
         CommandResponse response = sendCommand(writer, reader, "LOGIN " + user + " " + password);
         if (!response.getConfirmation().contains("OK")) {
             throw new IOException("Login failed");
@@ -153,7 +149,7 @@ public class ImapClient implements ReceiveApi {
                 attachments.add(new Attachment(bodyBytes, part.getType(), getFileName(part.getTokenText())));
             } else if (part.getType().equals("PLAIN")) {
                 bodyPlain = new String(bodyBytes, StandardCharsets.UTF_8);
-            } else if (part.getType().equals("HTML")){
+            } else if (part.getType().equals("HTML")) {
                 bodyHtml = new String(bodyBytes, StandardCharsets.UTF_8);
             } // discard the rest
         }
@@ -184,12 +180,12 @@ public class ImapClient implements ReceiveApi {
             throw new IOException("Fetching body part " + partNum + " with ID " + id + " failed");
         }
         String res = String.join("\n", response.getLines().subList(1, response.getLines().size()));
-        return res.substring(0, res.length()-1);
+        return res.substring(0, res.length() - 1);
     }
 
     private CommandResponse sendCommand(PrintWriter writer, BufferedReader reader, String command) throws IOException {
         // send to server
-        String commandSent = getCounter() + " " + command + "\r";
+        String commandSent = getCounter() + " " + command;
         writer.println(commandSent);
         writer.flush();
         // collect responses from server
