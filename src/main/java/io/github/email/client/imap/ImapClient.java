@@ -4,6 +4,7 @@ import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SSLDisableChecking;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
+import org.apache.commons.lang3.SystemUtils;
 
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
@@ -185,7 +186,9 @@ public class ImapClient implements ReceiveApi {
 
     private CommandResponse sendCommand(PrintWriter writer, BufferedReader reader, String command) throws IOException {
         // send to server
-        String commandSent = getCounter() + " " + command;
+        String endLine = getEndCharProperForOS();
+
+        String commandSent = getCounter() + " " + command + endLine;
         writer.println(commandSent);
         writer.flush();
         // collect responses from server
@@ -214,6 +217,11 @@ public class ImapClient implements ReceiveApi {
         }
         commandCounter++;
         return response;
+    }
+
+    private String getEndCharProperForOS() {
+        if (SystemUtils.IS_OS_LINUX) return "\r";
+        return "";
     }
 
     private void printDebugInfo(CommandResponse response, String command) {
