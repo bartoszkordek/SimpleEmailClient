@@ -13,6 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 
+import java.io.File;
+
 public class SendEmailTab extends Tab {
 
     public SendEmailTab() {
@@ -47,7 +49,7 @@ public class SendEmailTab extends Tab {
                 bccAddresses,
                 subject,
                 htmlEditor,
-                null
+                new File[0]
         );
 
         hBox.getChildren().add(addFileButton);
