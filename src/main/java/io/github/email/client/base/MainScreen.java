@@ -10,14 +10,8 @@ import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.smtp.SmtpClient;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingWorker;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Properties;
 
@@ -109,8 +103,8 @@ public class MainScreen extends JFrame {
     }
 
     private String[][] prepareMessages() {
-		Properties configProperties = configUtil.getProperties();
-        metadatas = receiveApi.downloadEmails(configProperties, 10);
+        Properties configProperties = configUtil.getProperties();
+        metadatas = receiveApi.downloadEmails(configProperties, 10, null);
         String[][] converted = new String[metadatas.size()][6];
         for (int i = 0; i < converted.length; i++) {
             MailMetadata metadata = metadatas.get(i);

@@ -2,6 +2,7 @@ package io.github.email.client.imap;
 
 import io.github.email.client.service.ReceiveApi;
 import io.github.email.client.service.SSLUtils;
+import javafx.scene.control.ProgressBar;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
 import org.apache.commons.lang3.SystemUtils;
@@ -16,24 +17,20 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ImapClient implements ReceiveApi {
-    private long commandCounter = 1;
     private final BodyStructureParser bodyStructureParser = new BodyStructureParser();
     private final Logger logger = LoggerFactory.getLogger(ImapClient.class);
+    private long commandCounter = 1;
+    private ProgressBar progressBar;
 
     @Override
-    public List<MailMetadata> downloadEmails(Properties properties, int limit) {
+    public List<MailMetadata> downloadEmails(Properties properties, int limit, ProgressBar progressBar) {
+        this.progressBar = progressBar;
         String host = properties.getProperty("mail.imap.host");
         String port = properties.getProperty("mail.imap.port");
         String user = properties.getProperty("mail.user");
@@ -55,11 +52,13 @@ public class ImapClient implements ReceiveApi {
                 selectInbox(writer, reader);
                 List<Integer> mailIds = searchAll(writer, reader);
                 List<MailMetadata> mailMetadatas = new ArrayList<>();
-                for (int i = 0; i < Math.min(limit, mailIds.size()); i++) {
+                int size = Math.min(limit, mailIds.size());
+                for (int i = 0; i < size; i++) {
                     int mailId = mailIds.get(i);
                     MailMetadata mailMetadata = fetchMetadata(writer, reader, mailId);
                     logger.info(i + ". email downloaded using IMAP");
                     mailMetadatas.add(mailMetadata);
+                    updateProgressBar(i, size);
                 }
                 return mailMetadatas;
             }
@@ -222,6 +221,11 @@ public class ImapClient implements ReceiveApi {
     private String getEndCharProperForOS() {
         if (SystemUtils.IS_OS_LINUX) return "\r";
         return "";
+    }
+
+    private void updateProgressBar(int i, int size) {
+        double progress = ((double) i + 1.0) / size;
+        progressBar.setProgress(progress);
     }
 
     private void printDebugInfo(CommandResponse response, String command) {
