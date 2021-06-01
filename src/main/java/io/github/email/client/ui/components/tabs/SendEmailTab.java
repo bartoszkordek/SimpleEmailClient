@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import io.github.email.client.ui.components.buttons.AddFileButton;
 import io.github.email.client.ui.components.buttons.SendEmailButton;
 import io.github.email.client.ui.components.gridpane.SendEmailGridPane;
+import io.github.email.client.ui.components.textfields.CustomTextField;
 import io.github.email.client.ui.components.textfields.EmailTextField;
 import io.github.email.client.ui.components.textfields.SubjectEmailTextField;
 import javafx.scene.Node;
@@ -12,18 +13,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
-
-import java.io.File;
+import javafx.stage.Stage;
 
 public class SendEmailTab extends Tab {
 
-    public SendEmailTab() {
+    public SendEmailTab(Stage primaryStage) {
         this.setClosable(false);
         this.setText("Send email");
-        this.setContent(getEmailTabContent());
+        this.setContent(getEmailTabContent(primaryStage));
     }
 
-    private Node getEmailTabContent() {
+    private Node getEmailTabContent(Stage primaryStage) {
         VBox vBox = new VBox();
 
         HTMLEditor htmlEditor = new HTMLEditor();
@@ -31,25 +31,28 @@ public class SendEmailTab extends Tab {
         EmailTextField toAddresses = new EmailTextField("To:");
         EmailTextField ccAddresses = new EmailTextField("CC:");
         EmailTextField bccAddresses = new EmailTextField("Bcc:");
+        CustomTextField attachments = new CustomTextField();
+        attachments.getLabel().setText("Attachments:");
         SubjectEmailTextField subject = new SubjectEmailTextField();
 
         GridPane gridPane = new SendEmailGridPane(
                 new EmailTextField[]{toAddresses, ccAddresses, bccAddresses},
-                subject
+                subject,
+                attachments
         );
 
         vBox.getChildren().add(gridPane);
         vBox.getChildren().add(htmlEditor);
 
         HBox hBox = new HBox();
-        JFXButton addFileButton = new AddFileButton();
+        AddFileButton addFileButton = new AddFileButton(primaryStage, attachments);
         JFXButton sendButton = new SendEmailButton(
-                toAddresses.getText(),
-                ccAddresses.getText(),
-                bccAddresses.getText(),
-                subject.getText(),
-                htmlEditor.getHtmlText(),
-                new File[0]
+                toAddresses,
+                ccAddresses,
+                bccAddresses,
+                subject,
+                htmlEditor,
+                attachments
         );
 
         hBox.getChildren().add(addFileButton);

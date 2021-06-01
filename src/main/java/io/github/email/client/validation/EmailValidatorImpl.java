@@ -11,7 +11,7 @@ public class EmailValidatorImpl implements EmailValidator {
     public boolean isAllEmailValid(String[] emails) {
         for (String email : emails) {
             email = email.trim();
-            boolean isAllValid = Boolean.logicalAnd(true, isEmailValid(email));
+            boolean isAllValid = isEmailValid(email);
             if (!isAllValid) return false;
         }
 
