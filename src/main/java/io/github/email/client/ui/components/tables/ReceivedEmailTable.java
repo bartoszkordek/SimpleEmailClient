@@ -8,7 +8,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
-public class ReceivedEmailTable extends TableView {
+public class ReceivedEmailTable extends TableView<Email> {
 
     public ReceivedEmailTable(Pane pane) {
         this.setPlaceholder(getNoContentLabel());
