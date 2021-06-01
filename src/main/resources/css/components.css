@@ -1,0 +1,22 @@
+.button-raised {
+    -fx-padding: 0.7em 0.57em;
+    -fx-font-size: 14px;
+    -jfx-button-type: RAISED;
+    -fx-background-color: rgb(77, 102, 204);
+    -fx-pref-width: 200;
+    -fx-text-fill: WHITE;
+}
+
+.text-field {
+    -fx-max-width: 300;
+}
+
+.jfx-text-field, .jfx-password-field {
+    -fx-background-color: WHITE;
+    -fx-font-weight: BOLD;
+    -fx-prompt-text-fill: #808080;
+    -fx-alignment: top-left;
+    -jfx-focus-color: #4059A9;
+    -jfx-unfocus-color: #4d4d4d;
+    -fx-max-width: 300;
+}
