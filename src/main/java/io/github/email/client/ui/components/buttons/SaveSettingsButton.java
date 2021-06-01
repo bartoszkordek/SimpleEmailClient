@@ -5,6 +5,8 @@ import com.jfoenix.controls.JFXTextField;
 import io.github.email.client.service.ConfigService;
 import io.github.email.client.ui.stages.ResponseDialogStage;
 import javafx.scene.input.MouseEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -16,6 +18,7 @@ public class SaveSettingsButton extends JFXButton {
     private final JFXTextField imapPort;
     private final JFXTextField username;
     private final JFXTextField password;
+    private final Logger logger = LoggerFactory.getLogger(SaveSettingsButton.class);
 
     public SaveSettingsButton(
             JFXTextField smtpHost,
@@ -49,17 +52,13 @@ public class SaveSettingsButton extends JFXButton {
                     username.getText(),
                     password.getText()
             );
-            System.out.println("Settings were saved successfully.");
+            logger.info("Settings were saved successfully.");
 
-            ResponseDialogStage response = new ResponseDialogStage();
+            ResponseDialogStage response = new ResponseDialogStage("Settings were saved successfully.");
             response.show();
-//            JOptionPane.showMessageDialog(SettingsDialog.this,
-//                    "Settings were saved successfully.");
-//            dispose();
         } catch (IOException e) {
-//            JOptionPane.showMessageDialog(this,
-//                    "Error saving settings: " + e.getMessage(),
-//                    "Error", JOptionPane.ERROR_MESSAGE);
+            ResponseDialogStage response = new ResponseDialogStage("Error saving settings.");
+            response.show();
         }
     }
 }

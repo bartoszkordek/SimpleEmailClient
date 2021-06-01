@@ -21,7 +21,7 @@ public class HelloFX extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("Simple email client");
         primaryStage.setHeight(HEIGHT);
         primaryStage.setWidth(WIDTH);

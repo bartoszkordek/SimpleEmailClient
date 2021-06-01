@@ -44,11 +44,11 @@ public class SendEmailTab extends Tab {
         HBox hBox = new HBox();
         JFXButton addFileButton = new AddFileButton();
         JFXButton sendButton = new SendEmailButton(
-                toAddresses,
-                ccAddresses,
-                bccAddresses,
-                subject,
-                htmlEditor,
+                toAddresses.getText(),
+                ccAddresses.getText(),
+                bccAddresses.getText(),
+                subject.getText(),
+                htmlEditor.getHtmlText(),
                 new File[0]
         );
 

@@ -3,6 +3,7 @@ package io.github.email.client.ui.components.tabs;
 import com.jfoenix.controls.JFXButton;
 import io.github.email.client.ui.components.buttons.GetEmailsButton;
 import io.github.email.client.ui.components.tables.ReceivedEmailTable;
+import io.github.email.client.util.Email;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
@@ -23,7 +24,7 @@ public class GetEmailsTab extends Tab {
         VBox main = new VBox();
 
         ProgressBar progressBar = getProgressBar();
-        TableView tableView = new ReceivedEmailTable(main);
+        TableView<Email> tableView = new ReceivedEmailTable(main);
         JFXButton getEmailsButton = new GetEmailsButton(tableView, progressBar);
 
         HBox hBox = new HBox();

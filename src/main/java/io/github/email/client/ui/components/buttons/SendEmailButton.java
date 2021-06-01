@@ -5,12 +5,11 @@ import io.github.email.client.exceptions.InvalidEmailException;
 import io.github.email.client.service.ConfigService;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.smtp.SmtpClient;
-import io.github.email.client.ui.components.textfields.EmailTextField;
-import io.github.email.client.ui.components.textfields.SubjectEmailTextField;
-import io.github.email.client.ui.stages.InvalidEmailStage;
+import io.github.email.client.ui.stages.ResponseDialogStage;
 import io.github.email.client.validation.EmailParser;
 import io.github.email.client.validation.EmailParserImpl;
-import javafx.scene.web.HTMLEditor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Properties;
@@ -18,44 +17,49 @@ import java.util.Properties;
 public class SendEmailButton extends JFXButton {
     private final ConfigService configUtil = new ConfigService();
     private final SendApi smtpClient = new SmtpClient();
+    private final Logger logger = LoggerFactory.getLogger(SendEmailButton.class);
 
     public SendEmailButton(
-            EmailTextField toAddresses,
-            EmailTextField ccAddresses,
-            EmailTextField bccAddresses,
-            SubjectEmailTextField subject,
-            HTMLEditor htmlEditor,
+            String toAddresses,
+            String ccAddresses,
+            String bccAddresses,
+            String subject,
+            String html,
             File[] attachFiles
     ) {
         super("Send");
         this.getStyleClass().add("button-raised");
         this.setOnMouseClicked(event ->
-                handleSendClick(toAddresses, ccAddresses, bccAddresses, subject, htmlEditor, attachFiles)
+                handleSendClick(toAddresses, ccAddresses, bccAddresses, subject, html, attachFiles)
         );
     }
 
     private void handleSendClick(
-            EmailTextField toAddresses,
-            EmailTextField ccAddresses,
-            EmailTextField bccAddresses,
-            SubjectEmailTextField subject,
-            HTMLEditor htmlEditor,
+            String toAddresses,
+            String ccAddresses,
+            String bccAddresses,
+            String subject,
+            String html,
             File[] attachFiles
     ) {
-        System.out.println("Sending email....");
+        logger.info("Sending email....");
 
         try {
             EmailParser emailParser = new EmailParserImpl();
-            String[] toEmails = emailParser.parseEmails(toAddresses.getText());
-            String[] ccEmails = emailParser.parseEmails(ccAddresses.getText());
-            String[] bccEmails = emailParser.parseEmails(bccAddresses.getText());
+            String[] toEmails = emailParser.parseEmails(toAddresses);
+            String[] ccEmails = emailParser.parseEmails(ccAddresses);
+            String[] bccEmails = emailParser.parseEmails(bccAddresses);
 
-            if (toEmails == null) throw new InvalidEmailException("You should provide at least one email");
-
-            this.sendEmail(toEmails, ccEmails, bccEmails, subject.getText(), htmlEditor.getHtmlText(), attachFiles);
+            if (toEmails.length == 0) {
+                throw new InvalidEmailException("You should provide at least one email");
+            }
+            if (subject.isBlank()) {
+                throw new InvalidEmailException("Subject cannot be empty");
+            }
+            this.sendEmail(toEmails, ccEmails, bccEmails, subject, html, attachFiles);
         } catch (InvalidEmailException exception) {
-            InvalidEmailStage emailStage = new InvalidEmailStage();
-            emailStage.show();
+            ResponseDialogStage responseDialog = new ResponseDialogStage(exception.getMessage());
+            responseDialog.show();
             exception.printStackTrace();
         }
     }
@@ -80,11 +84,10 @@ public class SendEmailButton extends JFXButton {
                     htmlContent,
                     attachFiles
             );
-
-            System.out.println("The e-mail has been sent successfully");
+            logger.info("The e-mail has been sent successfully");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error while sending the e-mail: " + e.getMessage());
+            logger.info("Error while sending the e-mail: " + e.getMessage());
         }
     }
 }
