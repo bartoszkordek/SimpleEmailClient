@@ -1,5 +1,8 @@
 package io.github.email.client.imap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -20,6 +23,7 @@ public class BodyStructureParser {
             "^\\s*\"(TEXT|APPLICATION|IMAGE|VIDEO|AUDIO)\"", Pattern.CASE_INSENSITIVE);
     private static final Pattern MULTIPART_SUBTYPE_PATTERN = Pattern.compile(
             String.format("^\\s*\"(%s)\"", String.join("|", SUBTYPES)), Pattern.CASE_INSENSITIVE);
+    private final Logger logger = LoggerFactory.getLogger(BodyStructureParser.class);
 
     public List<MailContentPart> parseMailContent(String bodyStructure) {
         Matcher matcher = BODY_PATTERN.matcher(bodyStructure);
@@ -100,6 +104,10 @@ public class BodyStructureParser {
             assert parts[1].length() >= 2;
             String type = parts[1].substring(1, parts[1].length()-1);
             mailContentParts.add(new MailContentPart(counters.peek(), type, currToken.text));
+        }
+        logger.debug("Body contains following parts:");
+        for (MailContentPart part : mailContentParts) {
+            logger.debug(part.toString());
         }
         return mailContentParts;
     }

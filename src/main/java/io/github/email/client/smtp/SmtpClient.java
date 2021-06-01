@@ -1,127 +1,87 @@
 package io.github.email.client.smtp;
 
-import io.github.email.client.service.SSLDisableChecking;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.mail.MessagingException;
+import javax.annotation.Nonnull;
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SmtpClient implements SendApi {
-    private final Logger logger = Logger.getLogger(SmtpClient.class.getName());
-    private boolean debug;
+    private final Logger logger = LoggerFactory.getLogger(SmtpClient.class);
 
-    public SmtpClient() {
-    }
-
-    public SmtpClient(boolean debug) {
-        this.debug = debug;
-    }
-
-    //for sending message to all recipients, to, cc, bcc flags are determined sepately
-    private String[] joinAllRecipients(String[] to, String[] cc, String[] bcc){
-
-        String[] joinedRecipients;
-
-        int toLen = 0;
-        int ccLen = 0;
-        int bccLen = 0;
-        if(to != null && !to.toString().isEmpty()) toLen = to.length;
-        if(cc != null && !cc.toString().isEmpty()) ccLen = cc.length;
-        if(bcc != null && !bcc.toString().isEmpty()) bccLen = bcc.length;
-
-        joinedRecipients = new String[toLen + ccLen + bccLen];
-        if(to != null && !to.toString().isEmpty())
-            System.arraycopy(to, 0, joinedRecipients, 0, toLen);
-        if(cc != null && !cc.toString().isEmpty())
-            System.arraycopy(cc, 0, joinedRecipients, toLen, ccLen);
-        if(bcc != null && !bcc.toString().isEmpty()){
-            if(cc != null && !cc.toString().isEmpty()){
-                System.arraycopy(bcc, 0, joinedRecipients, toLen + ccLen, bccLen);
-            } else {
-                System.arraycopy(bcc, 0, joinedRecipients, toLen, bccLen);
-            }
-        }
-
+    //for sending message to all recipients, to, cc, bcc flags are determined separately
+    private String[] joinAllRecipients(@Nonnull String[] to, @Nonnull String[] cc, @Nonnull String[] bcc){
+        String[] joinedRecipients = new String[to.length + cc.length + bcc.length];
+        System.arraycopy(to, 0, joinedRecipients, 0, to.length);
+        System.arraycopy(cc, 0, joinedRecipients, to.length, cc.length);
+        System.arraycopy(bcc, 0, joinedRecipients, to.length + cc.length, bcc.length);
         return joinedRecipients;
     }
 
     @Override
     public void sendEmail(
-            Properties configProperties,
-            String[] to,
-            String[] cc,
-            String[] bcc,
-            String subject,
-            String message,
-            File[] attachFiles
-    ) throws MessagingException, IOException, NoSuchAlgorithmException, KeyManagementException {
+            @Nonnull Properties configProperties,
+            @Nonnull String[] to,
+            @Nonnull String[] cc,
+            @Nonnull String[] bcc,
+            @Nonnull String subject,
+            @Nonnull String message,
+            @Nonnull File[] attachFiles
+    ) {
 
-        logger.log(Level.INFO, "Start sending email...");
+        logger.debug("Start sending email...");
         PropertiesLoader properties = new PropertiesLoaderImpl(configProperties);
 
         String host = properties.getSmtpHost();
-        int port = 465;// properties.getSmtpPort();
-
-        configProperties.put("mail.smtp.ssl.trust", configProperties.getProperty("mail.smtp.host")); //trust Host
-        setUpAdditionalProperties(configProperties);
-
+        int port = properties.getSmtpPort();
 
         //disable SSL checking in case of PKIX path validation issues
-        SSLDisableChecking sslDisableChecking = new SSLDisableChecking();
+//        SSLUtils.disableChecking();
 
-
-        // TODO: połączenie SSL, teraz jest nieszyfrowane
-//        SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-//        sslContext.init(null, null, new SecureRandom());
-
-        try (Socket socket = SSLSocketFactory.getDefault().createSocket()) {
+        try (Socket socket = SocketFactory.getDefault().createSocket()) {
             SocketAddress socketAddress = new InetSocketAddress(host, port);
             int timeoutInMillis = 50 * 1000;
             socket.connect(socketAddress, timeoutInMillis);
 
-            InputStream inputStream = socket.getInputStream();
-            Reader input = new InputStreamReader(inputStream);
-            BufferedReader reader = new BufferedReader(input);
+            logger.debug("Unencrypted socket port: \t\t\t" + socket.getPort());
+            logger.debug("Unencrypted socket IP address: \t\t" + socket.getInetAddress());
 
-            logger.log(Level.INFO, () -> "Socket port: \t\t\t" + socket.getPort());
-            logger.log(Level.INFO, () -> "Socket IP address: \t\t" + socket.getInetAddress());
+            try (PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                SmtpUnencryptedCommandSender unencryptedCommandSender = new SmtpUnencryptedCommandSenderImpl(writer, reader, properties);
+                unencryptedCommandSender.connectionEstablished();
+                unencryptedCommandSender.sendEHLOCommand();
+                unencryptedCommandSender.sendStartTlsCommand();
 
-            OutputStream outputStream = socket.getOutputStream();
-            PrintWriter writer = new PrintWriter(outputStream);
+                try (SSLSocket sslSocket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(
+                        socket, socket.getInetAddress().getHostAddress(), socket.getPort(), true);
+                     PrintWriter sslWriter = new PrintWriter(sslSocket.getOutputStream());
+                     BufferedReader sslReader = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()))) {
 
-            SmtpCommandSender smtpCommandSender = new SmtpCommandSenderImpl(writer, reader, properties, debug);
-
-            smtpCommandSender.connectionEstablished();
-            smtpCommandSender.sendEHLOCommand();
-            smtpCommandSender.sendAuthCommands();
-            smtpCommandSender.sendMailFromCommand();
-
-            String[] joinedAllRecipients = joinAllRecipients(to, cc, bcc);
-            smtpCommandSender.sendRcptToCommand(joinedAllRecipients);
-            smtpCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
-            smtpCommandSender.sendQuitCommand();
-
+                    SmtpSSLCommandSender smtpSSLCommandSender = new SmtpSSLCommandSenderImpl(sslWriter, sslReader, properties);
+                    smtpSSLCommandSender.sendAuthCommands();
+                    smtpSSLCommandSender.sendMailFromCommand();
+                    String[] joinedAllRecipients = joinAllRecipients(to, cc, bcc);
+                    smtpSSLCommandSender.sendRcptToCommand(joinedAllRecipients);
+                    smtpSSLCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
+                    smtpSSLCommandSender.sendQuitCommand();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    private void setUpAdditionalProperties(Properties configProperties) {
-        configProperties.put("mail.smtp.ssl.trust", configProperties.getProperty("mail.smtp.host")); //trust Host
-        configProperties.put("mail.smtp.ssl.enable", true);
-        configProperties.put("mail.smtp.starttls.enable", false);
-        configProperties.put("mail.smtp.socketFactory.port", "587");
     }
 }

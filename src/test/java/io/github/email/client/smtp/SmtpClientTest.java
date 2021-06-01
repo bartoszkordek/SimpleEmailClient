@@ -18,13 +18,13 @@ class SmtpClientTest {
 
     @BeforeEach
     void setUp() {
-        smtpClient = new SmtpClient(true);
+        smtpClient = new SmtpClient();
         configService = new ConfigService();
     }
 
     @Disabled
     @Test
-    void shouldSendEmail() throws MessagingException, KeyManagementException, NoSuchAlgorithmException, IOException {
+    void shouldSendEmail() {
         String[] to = new String[]{"aghproject2020@gmail.com"};
         String[] cc = new String[]{};
         String[] bcc = new String[]{};
