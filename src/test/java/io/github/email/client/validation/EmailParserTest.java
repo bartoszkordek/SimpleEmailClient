@@ -48,13 +48,13 @@ class EmailParserTest {
     @Test
     void shouldReturnNullWhenNoEmailsProvided() throws InvalidEmailException {
         String emailsAsString="";
-        assertThat(emailParser.parseEmails(emailsAsString)).isNull();
+        assertThat(emailParser.parseEmails(emailsAsString)).isEmpty();
     }
 
     @Test
     void shouldReturnNullWhenNoEmailsProvidedWithTrimming() throws InvalidEmailException {
         String emailsAsString="  ";
-        assertThat(emailParser.parseEmails(emailsAsString)).isNull();
+        assertThat(emailParser.parseEmails(emailsAsString)).isEmpty();
     }
 
     @Test
