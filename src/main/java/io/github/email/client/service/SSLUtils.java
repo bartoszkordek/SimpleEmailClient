@@ -8,11 +8,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 
-public class SSLDisableChecking {
-
-    public SSLDisableChecking(){
-
-        SSLContext ctx = null;
+public class SSLUtils {
+    public static void disableChecking() {
+        SSLContext ctx;
         TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager(){
             public X509Certificate[] getAcceptedIssuers(){return null;}
             public void checkClientTrusted(X509Certificate[] certs, String authType){}
@@ -21,10 +19,9 @@ public class SSLDisableChecking {
         try {
             ctx = SSLContext.getInstance("SSL");
             ctx.init(null, trustAllCerts, new SecureRandom());
+            SSLContext.setDefault(ctx);
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             e.printStackTrace();
         }
-
-        SSLContext.setDefault(ctx);
     }
 }

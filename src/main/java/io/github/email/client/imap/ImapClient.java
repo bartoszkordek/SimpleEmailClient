@@ -1,9 +1,11 @@
 package io.github.email.client.imap;
 
 import io.github.email.client.service.ReceiveApi;
-import io.github.email.client.service.SSLDisableChecking;
+import io.github.email.client.service.SSLUtils;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
@@ -18,6 +20,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,15 +28,8 @@ import java.util.stream.Collectors;
 
 public class ImapClient implements ReceiveApi {
     private long commandCounter = 1;
-    private final boolean debug;
     private final BodyStructureParser bodyStructureParser = new BodyStructureParser();
-
-    public ImapClient() {
-        this(false);
-    }
-    public ImapClient(boolean debug) {
-        this.debug = debug;
-    }
+    private final Logger logger = LoggerFactory.getLogger(ImapClient.class);
 
     @Override
     public List<MailMetadata> downloadEmails(Properties properties, int limit) {
@@ -44,14 +40,15 @@ public class ImapClient implements ReceiveApi {
         properties.put("mail.imap.ssl.trust", properties.getProperty("mail.imap.host")); //trust Host
 
         //disable SSL checking in case of PKIX path validation issues
-        SSLDisableChecking sslDisableChecking = new SSLDisableChecking();
+        SSLUtils.disableChecking();
 
         try (Socket socket = SSLSocketFactory.getDefault().createSocket()) {
             socket.connect(new InetSocketAddress(host, Integer.parseInt(port)), 5 * 1000);
             try (PrintWriter writer = new PrintWriter(socket.getOutputStream());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                logger.debug("Connection to server established");
                 // Hello from server
-                System.out.println(reader.readLine());
+                logger.debug(reader.readLine());
                 // Login
                 login(writer, reader, user, password);
                 selectInbox(writer, reader);
@@ -60,7 +57,7 @@ public class ImapClient implements ReceiveApi {
                 for (int i = 0; i < Math.min(limit, mailIds.size()); i++) {
                     int mailId = mailIds.get(i);
                     MailMetadata mailMetadata = fetchMetadata(writer, reader, mailId);
-                    System.out.println(i + ". email downloaded (low level API - using IMAP directly)");
+                    logger.info(i + ". email downloaded using IMAP");
                     mailMetadatas.add(mailMetadata);
                 }
                 return mailMetadatas;
@@ -115,17 +112,18 @@ public class ImapClient implements ReceiveApi {
         }
         String date = "", from = "", to = "", cc = "", bcc = "", subject = "";
         for (String line : response.getLines()) {
-            if (line.startsWith("Date: ")) {
+            line = line.toLowerCase(Locale.ROOT);
+            if (line.startsWith("date: ")) {
                 date = line.substring(6);
-            } else if (line.startsWith("From: ")) {
+            } else if (line.startsWith("from: ")) {
                 from = line.substring(6);
-            } else if (line.startsWith("To: ")) {
+            } else if (line.startsWith("to: ")) {
                 to = line.substring(4);
-            } else if (line.startsWith("Cc: ")) {
+            } else if (line.startsWith("cc: ")) {
                 cc = line.substring(4);
-            } else if (line.startsWith("Bcc: ")) {
+            } else if (line.startsWith("bcc: ")) {
                 bcc = line.substring(5);
-            } else if (line.startsWith("Subject: ")) {
+            } else if (line.startsWith("subject: ")) {
                 subject = line.substring(9);
             }
         }
@@ -213,21 +211,17 @@ public class ImapClient implements ReceiveApi {
             }
         }
         CommandResponse response = new CommandResponse(responseLines, confirmation);
-        if (debug) {
-            printDebugInfo(response, commandSent);
-        }
+        printDebugInfo(response, commandSent);
         commandCounter++;
         return response;
     }
 
     private void printDebugInfo(CommandResponse response, String command) {
-        System.out.println();
-        System.out.println("############|-START-|############");
-        System.out.println(command);
-        response.getLines().forEach(System.out::println);
-        System.out.println(response.getConfirmation());
-        System.out.println("#############|-END-|#############");
-        System.out.println();
+        logger.debug("Sending command: " + command);
+        logger.debug("Response from server:");
+        response.getLines().forEach(logger::debug);
+        logger.debug("Response code from server:");
+        logger.debug(response.getConfirmation());
     }
 
     private String getCounter() {

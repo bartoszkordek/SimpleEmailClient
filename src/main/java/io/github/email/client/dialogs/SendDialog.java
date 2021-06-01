@@ -37,7 +37,6 @@ public class SendDialog extends JDialog {
     private final GridBagConstraints constraints = new GridBagConstraints();
     private final ConfigService configUtil;
     private final SendApi sendApi;
-    private final SmtpClient smtpClient = new SmtpClient(true);
 
     public SendDialog(JFrame parent, SendApi sendApi, ConfigService configUtil) {
         super(parent, "Send email", true);
@@ -80,17 +79,17 @@ public class SendDialog extends JDialog {
         }
 
         String[] toAddresses = fieldTo.getText().split(",");
-        String[] ccAddresses = null;
+        String[] ccAddresses = new String[0];
         if (!fieldCc.getText().equals("")) {
             ccAddresses = fieldCc.getText().split(",");
         }
-        String[] bccAddresses = null;
+        String[] bccAddresses = new String[0];
         if (!fieldBcc.getText().equals("")) {
             bccAddresses = fieldBcc.getText().split(",");
         }
         String subject = fieldSubject.getText();
         String message = textAreaMessage.getText();
-        File[] attachFiles = null;
+        File[] attachFiles = new File[0];
         if (!fileChooser.getSelectedFilePaths().equals("")) {
             attachFiles = Arrays.stream(fileChooser.getSelectedFilePaths().split(","))
                     .map(File::new)
@@ -99,8 +98,7 @@ public class SendDialog extends JDialog {
 
         try {
             Properties configProperties = configUtil.getProperties();
-            //sendApi.sendEmail(configProperties, toAddresses, ccAddresses, bccAddresses, subject, message, attachFiles);
-            smtpClient.sendEmail(configProperties, toAddresses, ccAddresses, bccAddresses, subject, message, attachFiles);
+            sendApi.sendEmail(configProperties, toAddresses, ccAddresses, bccAddresses, subject, message, attachFiles);
 
             JOptionPane.showMessageDialog(this,
                     "The e-mail has been sent successfully");
