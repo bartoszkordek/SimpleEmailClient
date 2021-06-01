@@ -1,26 +1,21 @@
 package io.github.email.client.ui.components.background;
 
+import io.github.email.client.util.ImageLoader;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
 public class CustomBackground {
-    private URL url;
 
-    public CustomBackground(String image) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        url = classLoader.getResource(image);
+    private CustomBackground() {
+        throw new IllegalStateException("Utility class");
     }
 
-    public Background getBackground() {
+    public static Background getBackground(String name) {
+        ImageLoader imageLoader = new ImageLoader();
+        Image image = imageLoader.getImage(name);
+
         BackgroundImage backgroundImage = new BackgroundImage(
-                createImage(),
+                image,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.DEFAULT,
@@ -34,18 +29,5 @@ public class CustomBackground {
                 )
         );
         return new Background(backgroundImage);
-    }
-
-    private Image createImage() {
-        FileInputStream inputStream = null;
-        try {
-            URI uri = url.toURI();
-            File file = new File(uri);
-            inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        return new Image(inputStream);
     }
 }
