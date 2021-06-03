@@ -8,14 +8,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
-public class ReceivedEmailTable extends TableView {
+public class ReceivedEmailSideBarTable extends TableView {
 
-    public ReceivedEmailTable(Pane pane) {
+    public ReceivedEmailSideBarTable(Pane pane) {
         this.setPlaceholder(getNoContentLabel());
         this.setBackground(CustomBackground.getBackground("images/background/bg4.jpg"));
         this.createColumns();
         this.prefHeightProperty().bind(pane.heightProperty());
-        this.prefWidthProperty().bind(pane.widthProperty());
     }
 
     private void createColumns() {
@@ -24,21 +23,13 @@ public class ReceivedEmailTable extends TableView {
         fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
         this.getColumns().add(fromColumn);
 
-        TableColumn<Email, String> toColumn = new TableColumn<>("To");
-        toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
-        this.getColumns().add(toColumn);
-
-        TableColumn<Email, String> ccColumn = new TableColumn<>("Cc");
-        ccColumn.setCellValueFactory(new PropertyValueFactory<>("cc"));
-        this.getColumns().add(ccColumn);
-
-        TableColumn<Email, String> bccColumn = new TableColumn<>("Bcc");
-        bccColumn.setCellValueFactory(new PropertyValueFactory<>("bcc"));
-        this.getColumns().add(bccColumn);
-
         TableColumn<Email, String> subject = new TableColumn<>("Subject");
         subject.setCellValueFactory(new PropertyValueFactory<>("subject"));
         this.getColumns().add(subject);
+
+        TableColumn<Email, String> bodyHtml = new TableColumn<>("Message");
+        bodyHtml.setCellValueFactory(new PropertyValueFactory<>("bodyPlain"));
+        this.getColumns().add(bodyHtml);
 
         TableColumn<Email, String> date = new TableColumn<>("Date");
         date.setCellValueFactory(new PropertyValueFactory<>("date"));

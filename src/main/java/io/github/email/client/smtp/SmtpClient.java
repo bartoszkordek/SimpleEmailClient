@@ -49,7 +49,7 @@ public class SmtpClient implements SendApi {
         int port = properties.getSmtpPort();
 
         //disable SSL checking in case of PKIX path validation issues
-//        SSLUtils.disableChecking();
+        //SSLUtils.disableChecking();
 
         try (Socket socket = SocketFactory.getDefault().createSocket()) {
             SocketAddress socketAddress = new InetSocketAddress(host, port);
