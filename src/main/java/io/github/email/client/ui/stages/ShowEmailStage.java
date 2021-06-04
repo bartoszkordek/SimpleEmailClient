@@ -8,7 +8,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ShowEmailStage extends Stage {
@@ -19,7 +18,6 @@ public class ShowEmailStage extends Stage {
     public ShowEmailStage(Email email) {
         super();
         this.email = email;
-        this.initModality(Modality.APPLICATION_MODAL);
         this.setHeight(HEIGHT);
         this.setWidth(WIDTH);
         this.setMinHeight(HEIGHT);

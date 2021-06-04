@@ -6,6 +6,7 @@ import io.github.email.client.ui.components.tabs.SendEmailTab;
 import io.github.email.client.ui.components.tabs.SettingsTab;
 import io.github.email.client.ui.scenes.MainScene;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -33,6 +34,7 @@ public class HelloFX extends Application {
         );
         primaryStage.setScene(mainScene);
         primaryStage.getIcons().add(SimpleEmailIcon.getIcon());
+        primaryStage.setOnCloseRequest(event -> Platform.exit());
 
         primaryStage.show();
     }
