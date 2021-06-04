@@ -12,6 +12,7 @@ import io.github.email.client.ui.stages.ResponseDialogStage;
 import io.github.email.client.validation.EmailParser;
 import io.github.email.client.validation.EmailParserImpl;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,15 @@ public class SendEmailButton extends JFXButton {
             SubjectEmailTextField subject,
             HTMLEditor htmlEditor,
             CustomTextField attachments,
-            ProgressBar progressBar
+            ProgressBar progressBar,
+            VBox vBox
     ) {
         super("Send");
         this.getStyleClass().add("button-raised");
-        this.setOnMouseClicked(event ->
-                handleSendClick(toAddresses, ccAddresses, bccAddresses, subject, htmlEditor, attachments, progressBar)
-        );
+        this.setOnMouseClicked(event -> {
+            vBox.setDisable(true);
+            handleSendClick(toAddresses, ccAddresses, bccAddresses, subject, htmlEditor, attachments, progressBar);
+        });
     }
 
     private void handleSendClick(
