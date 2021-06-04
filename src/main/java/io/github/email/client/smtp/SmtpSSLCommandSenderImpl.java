@@ -164,8 +164,6 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
         byte[] footerFileBytesParsed = Files.readAllBytes(footerImage.toPath());
         final String footerEncodedFile = Base64.getEncoder().encodeToString(footerFileBytesParsed);
 
-        System.out.println(message);
-
         StringBuilder command = new StringBuilder();
         command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
                 .append(carriageReturn)

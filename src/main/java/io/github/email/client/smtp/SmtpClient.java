@@ -1,5 +1,6 @@
 package io.github.email.client.smtp;
 
+import io.github.email.client.service.SSLUtils;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
@@ -22,7 +23,7 @@ import java.util.Properties;
 public class SmtpClient implements SendApi {
     private final Logger logger = LoggerFactory.getLogger(SmtpClient.class);
 
-    private String[] joinAllRecipients(@Nonnull String[] to, @Nonnull String[] cc, @Nonnull String[] bcc){
+    private String[] joinAllRecipients(@Nonnull String[] to, @Nonnull String[] cc, @Nonnull String[] bcc) {
         String[] joinedRecipients = new String[to.length + cc.length + bcc.length];
         System.arraycopy(to, 0, joinedRecipients, 0, to.length);
         System.arraycopy(cc, 0, joinedRecipients, to.length, cc.length);
@@ -46,6 +47,8 @@ public class SmtpClient implements SendApi {
 
         String host = properties.getSmtpHost();
         int port = properties.getSmtpPort();
+
+        SSLUtils.disableChecking();
 
         try (Socket socket = SocketFactory.getDefault().createSocket()) {
             SocketAddress socketAddress = new InetSocketAddress(host, port);
