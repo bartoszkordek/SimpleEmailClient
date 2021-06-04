@@ -164,6 +164,8 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
         byte[] footerFileBytesParsed = Files.readAllBytes(footerImage.toPath());
         final String footerEncodedFile = Base64.getEncoder().encodeToString(footerFileBytesParsed);
 
+        System.out.println(message);
+
         StringBuilder command = new StringBuilder();
         command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
                 .append(carriageReturn)
@@ -189,8 +191,8 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                 .append(message)
                 .append(
                         "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
-                        "    </body>\n" +
-                        "</html>")
+                                "    </body>\n" +
+                                "</html>")
                 .append(carriageReturn)
                 .append(carriageReturn)
                 .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
@@ -210,7 +212,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                 .append(carriageReturn)
                 .append(carriageReturn);
 
-        for(File file : files){
+        for (File file : files) {
             String fileName = file.getName();
             byte[] fileBytesParsed = Files.readAllBytes(file.toPath());
             final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
@@ -280,10 +282,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
             sendCommand(toCommand);
         }
 
-
-        //main message
-        //send message with or without attachment
-        if(attachFiles.length > 0){
+        if (attachFiles.length > 0 && attachFiles[0].isFile()) {
             sendMessageWithAttachmentCommand(message, attachFiles, footerFile);
         } else {
             sendMessageWithoutAttachmentCommand(message, footerFile);
