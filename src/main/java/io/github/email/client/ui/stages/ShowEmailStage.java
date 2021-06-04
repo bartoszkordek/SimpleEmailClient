@@ -1,36 +1,58 @@
 package io.github.email.client.ui.stages;
 
-import com.jfoenix.controls.JFXButton;
+import io.github.email.client.ui.components.gridpane.ReceiveEmailGridPane;
+import io.github.email.client.ui.components.icons.SimpleEmailIcon;
+import io.github.email.client.util.Email;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ShowEmailStage extends Stage {
+    private static final double HEIGHT = 720;
+    private static final double WIDTH = 1280;
+    private final Email email;
 
-    public  ShowEmailStage() {
+    public ShowEmailStage(Email email) {
         super();
+        this.email = email;
         this.initModality(Modality.APPLICATION_MODAL);
+        this.setHeight(HEIGHT);
+        this.setWidth(WIDTH);
+        this.setMinHeight(HEIGHT);
+        this.setMinWidth(WIDTH);
+        this.getIcons().add(SimpleEmailIcon.getIcon());
+        this.setTitle("Simple email client - " + email.getSubject());
         this.setScene(getResponseScene());
     }
 
     private Scene getResponseScene() {
-        JFXButton button = new JFXButton();
-        button.getStyleClass().add("button-raised");
-        button.setText("OK");
-        button.setOnMouseClicked(event -> this.close());
-
-        Label label = new Label("Here should be displayed the email");
-
         VBox vBox = new VBox();
-        vBox.getChildren().add(label);
-        vBox.getChildren().add(button);
+        vBox.getChildren().addAll(
+                getGridPane(),
+                getWebView()
+        );
 
-        Scene scene = new Scene(vBox, 173, 100);
+        Scene scene = new Scene(vBox);
         scene.getStylesheets()
                 .add(ResponseDialogStage.class.getResource("/css/components.css").toExternalForm());
 
         return scene;
+    }
+
+    private GridPane getGridPane() {
+        return new ReceiveEmailGridPane(email);
+    }
+
+    private WebView getWebView() {
+        WebView webView = new WebView();
+        WebEngine webEngine = webView.getEngine();
+        String html = email.getBodyHtml()
+                .replaceFirst("contenteditable=\"true\"", "contenteditable=\"false\"");
+        webEngine.loadContent(html, "text/html");
+        return webView;
     }
 }
