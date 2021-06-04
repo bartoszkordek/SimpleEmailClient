@@ -17,6 +17,10 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -114,6 +118,39 @@ public class ImapClient implements ReceiveApi {
             line = line.toLowerCase(Locale.ROOT);
             if (line.startsWith("date: ")) {
                 date = line.substring(6);
+
+                String subDate = date.substring(5,25);
+                String day = date.substring(5,7);
+                String month = date.substring(8,11);
+                month = month.substring(0,1).toUpperCase().concat(month.substring(1));
+                String year = date.substring(12, 16);
+                String time = date.substring(17,25);
+
+                Map<String,String> monthsMap = new HashMap<>();
+                monthsMap.put("Jan", "01");
+                monthsMap.put("Feb", "02");
+                monthsMap.put("Mar", "03");
+                monthsMap.put("Apr", "04");
+                monthsMap.put("May", "05");
+                monthsMap.put("Jun", "06");
+                monthsMap.put("Jul", "07");
+                monthsMap.put("Aug", "08");
+                monthsMap.put("Sep", "09");
+                monthsMap.put("Oct", "10");
+                monthsMap.put("Nov", "11");
+                monthsMap.put("Dec", "12");
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                LocalDateTime dateTime = LocalDateTime.parse(day+'-'+monthsMap.get(month)+'-'+year+' '+time , formatter);
+                ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("UTC"));
+                final ZonedDateTime converted = zonedDateTime.plusMinutes(600);
+                String convertedDateAndTime = converted.toLocalDateTime().toString();
+                String finalFormattedDateAndTime =
+                        convertedDateAndTime.substring(0,10)
+                                .concat(" ")
+                                .concat(convertedDateAndTime.substring(11));
+                date = finalFormattedDateAndTime;
+
             } else if (line.startsWith("from: ")) {
                 from = line.substring(6);
             } else if (line.startsWith("to: ")) {
