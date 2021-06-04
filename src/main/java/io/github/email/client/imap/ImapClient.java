@@ -119,7 +119,8 @@ public class ImapClient implements ReceiveApi {
         if (!response.getConfirmation().contains("OK")) {
             throw new IOException("Fetching headers for ID " + id + " failed");
         }
-        String date = "", from = "", to = "", cc = "", bcc = "", subject = "";
+        String date = "", from = "", subject = "";
+        List<String> to = new ArrayList<>(), cc = new ArrayList<>(), bcc = new ArrayList<>();
         for (String line : response.getLines()) {
             line = line.toLowerCase(Locale.ROOT);
             if (line.startsWith("date: ")) {
@@ -134,11 +135,11 @@ public class ImapClient implements ReceiveApi {
             } else if (line.startsWith("from: ")) {
                 from = line.substring(6);
             } else if (line.startsWith("to: ")) {
-                to = line.substring(4);
+                to.add(line.substring(4));
             } else if (line.startsWith("cc: ")) {
-                cc = line.substring(4);
+                cc.add(line.substring(4));
             } else if (line.startsWith("bcc: ")) {
-                bcc = line.substring(5);
+                bcc.add(line.substring(5));
             } else if (line.startsWith("subject: ")) {
                 subject = line.substring(9);
             }
@@ -171,7 +172,7 @@ public class ImapClient implements ReceiveApi {
                 bodyHtml = new String(bodyBytes, StandardCharsets.UTF_8);
             } // discard the rest
         }
-        return new MailMetadata(date, from, to, cc, bcc, subject, bodyPlain, bodyHtml, attachments);
+        return new MailMetadata(date, from, to.toString(), cc.toString(), bcc.toString(), subject, bodyPlain, bodyHtml, attachments);
     }
 
     private String getFileName(String textToken) {
