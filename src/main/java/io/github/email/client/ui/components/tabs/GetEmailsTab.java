@@ -38,7 +38,7 @@ public class GetEmailsTab extends Tab {
 
     private ProgressBar getProgressBar() {
         ProgressBar progressBar = new ProgressBar(0);
-        progressBar.setPrefWidth(150);
+        progressBar.setPrefWidth(500);
         progressBar.setVisible(false);
         progressBar.progressProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.doubleValue() == 1.0) progressBar.setVisible(false);
