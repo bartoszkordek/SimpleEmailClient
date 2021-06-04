@@ -27,7 +27,7 @@ public class DownloadEmails extends Thread {
     public void run() {
         Properties configProperties = configUtil.getProperties();
         List<MailMetadata> metadataList = receiveApi.downloadEmails(configProperties, 10, progressBar);
-
+        tableView.getItems().clear();
         for (MailMetadata metadata : metadataList) {
             Email email = new Email(
                     metadata.getFrom(),
