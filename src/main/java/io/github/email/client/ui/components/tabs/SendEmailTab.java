@@ -19,6 +19,12 @@ import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 
 public class SendEmailTab extends Tab {
+    private EmailTextField toAddresses;
+    private EmailTextField ccAddresses;
+    private EmailTextField bccAddresses;
+    private CustomTextField attachments;
+    private SubjectEmailTextField subject;
+    private HTMLEditor htmlEditor;
 
     public SendEmailTab(Stage primaryStage) {
         this.setClosable(false);
@@ -29,15 +35,15 @@ public class SendEmailTab extends Tab {
     private Node getEmailTabContent(Stage primaryStage) {
         VBox vBox = new VBox();
 
-        HTMLEditor htmlEditor = new HTMLEditor();
+        htmlEditor = new HTMLEditor();
         ProgressBar progressBar = getProgressBar();
 
-        EmailTextField toAddresses = new EmailTextField("To:");
-        EmailTextField ccAddresses = new EmailTextField("CC:");
-        EmailTextField bccAddresses = new EmailTextField("Bcc:");
-        CustomTextField attachments = new CustomTextField();
+        toAddresses = new EmailTextField("To:");
+        ccAddresses = new EmailTextField("CC:");
+        bccAddresses = new EmailTextField("Bcc:");
+        attachments = new CustomTextField();
         attachments.getLabel().setText("Attachments:");
-        SubjectEmailTextField subject = new SubjectEmailTextField();
+        subject = new SubjectEmailTextField();
 
         GridPane gridPane = new SendEmailGridPane(
                 new EmailTextField[]{toAddresses, ccAddresses, bccAddresses},
@@ -78,8 +84,18 @@ public class SendEmailTab extends Tab {
             if (newValue.doubleValue() == 1.0) {
                 progressBar.setVisible(false);
                 progressBar.setProgress(0);
+                resetSendEmailTab();
             }
         });
         return progressBar;
+    }
+
+    private void resetSendEmailTab() {
+        toAddresses.setText("");
+        ccAddresses.setText("");
+        bccAddresses.setText("");
+        subject.setText("");
+        attachments.setText("");
+        htmlEditor.setHtmlText("");
     }
 }
