@@ -29,7 +29,7 @@ public class ResponseDialogStage extends Stage {
         vBox.getChildren().add(button);
         vBox.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(vBox, 300, 100);
+        Scene scene = new Scene(vBox, 400, 100);
         scene.getStylesheets()
                 .add(ResponseDialogStage.class.getResource("/css/components.css").toExternalForm());
 

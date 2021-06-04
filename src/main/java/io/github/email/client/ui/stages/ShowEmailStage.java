@@ -42,7 +42,7 @@ public class ShowEmailStage extends Stage {
     }
 
     private GridPane getGridPane() {
-        return new ReceiveEmailGridPane(email);
+        return new ReceiveEmailGridPane(email, this);
     }
 
     private WebView getWebView() {
