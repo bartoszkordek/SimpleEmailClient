@@ -1,11 +1,15 @@
 package io.github.email.client.ui.components.tables;
 
 import io.github.email.client.ui.components.background.CustomBackground;
+import io.github.email.client.ui.stages.ShowEmailStage;
 import io.github.email.client.util.Email;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 public class ReceivedEmailTable extends TableView {
@@ -16,6 +20,7 @@ public class ReceivedEmailTable extends TableView {
         this.createColumns();
         this.prefHeightProperty().bind(pane.heightProperty());
         this.prefWidthProperty().bind(pane.widthProperty());
+        this.setOnMouseClicked(this::handleMouseClicked);
     }
 
     private void createColumns() {
@@ -51,5 +56,18 @@ public class ReceivedEmailTable extends TableView {
         label.setText("No email to display.\nClick button to download emails.");
         label.setStyle("-fx-font-size: 16; -fx-font-weight: bold; -fx-text-alignment: center");
         return label;
+    }
+
+    private void handleMouseClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 1) return;
+
+        TableView.TableViewSelectionModel<Email> selectionModel = this.getSelectionModel();
+        selectionModel.setSelectionMode(SelectionMode.SINGLE);
+
+        ObservableList<Email> selectedItems = selectionModel.getSelectedItems();
+        Email selectedEmail = selectedItems.get(0);
+
+        ShowEmailStage showEmailStage = new ShowEmailStage(selectedEmail);
+        showEmailStage.show();
     }
 }
