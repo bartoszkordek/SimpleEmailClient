@@ -31,13 +31,14 @@ public class GetEmailsTab extends Tab {
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.setSpacing(50);
         hBox.getChildren().addAll(getEmailsButton, progressBar);
+
         main.getChildren().addAll(hBox, tableView);
         return main;
     }
 
     private ProgressBar getProgressBar() {
         ProgressBar progressBar = new ProgressBar(0);
-        progressBar.setPrefWidth(500);
+        progressBar.setPrefWidth(150);
         progressBar.setVisible(false);
         progressBar.progressProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.doubleValue() == 1.0) progressBar.setVisible(false);

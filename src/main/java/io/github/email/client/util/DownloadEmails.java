@@ -35,7 +35,10 @@ public class DownloadEmails extends Thread {
                     metadata.getCc(),
                     metadata.getBcc(),
                     metadata.getSubject(),
-                    metadata.getDate()
+                    metadata.getDate(),
+                    metadata.getBodyPlain(),
+                    metadata.getBodyHtml(),
+                    metadata.getAttachments()
             );
             tableView.getItems().add(email);
         }

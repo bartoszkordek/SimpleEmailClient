@@ -83,7 +83,6 @@ public class SendEmailButton extends JFXButton {
             String htmlContent,
             File[] attachFiles
     ) {
-
         Properties configProperties = configUtil.getProperties();
         smtpClient.sendEmail(
                 configProperties,
