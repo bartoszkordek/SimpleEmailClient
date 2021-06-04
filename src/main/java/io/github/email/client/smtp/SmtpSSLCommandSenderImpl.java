@@ -120,10 +120,9 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "    </head>\n" +
                         "    <body>\n")
                 .append(message)
-                .append(
-                                "    </body>\n" +
-                                "</html>")
                 .append(carriageReturn)
+                .append(carriageReturn)
+                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
                 .append(carriageReturn);
 
         sendCommand(command.toString());
@@ -136,17 +135,16 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
 
         final String carriageReturn = "\r\n";
 
+        System.out.println(message);
+
         StringBuilder command = new StringBuilder();
         command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
                 .append(carriageReturn)
                 .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
                 .append(carriageReturn)
                 //plain/html text message
-                .append("Content-Disposition: form-data; name=description")
+                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
                 .append(carriageReturn)
-                .append("Content-Transfer-Encoding: quoted-printable")
-                .append(carriageReturn)
-                .append("Content-Type:text/html; charset=UTF-8")
                 .append("Content-Type: text/html; charset=utf-8")
                 .append(carriageReturn)
                 .append("Content-Transfer-Encoding: 8bit")
@@ -159,10 +157,6 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "    </head>\n" +
                         "    <body>\n")
                 .append(message)
-                .append(
-                        "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
-                                "    </body>\n" +
-                                "</html>")
                 .append(carriageReturn)
                 .append(carriageReturn);
 
