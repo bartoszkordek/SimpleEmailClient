@@ -4,6 +4,7 @@ import io.github.email.client.service.SSLUtils;
 import io.github.email.client.service.SendApi;
 import io.github.email.client.util.PropertiesLoader;
 import io.github.email.client.util.PropertiesLoaderImpl;
+import javafx.scene.control.ProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,8 @@ public class SmtpClient implements SendApi {
             @Nonnull String[] bcc,
             @Nonnull String subject,
             @Nonnull String message,
-            @Nonnull File[] attachFiles
+            @Nonnull File[] attachFiles,
+            ProgressBar progressBar
     ) {
 
         logger.debug("Start sending email...");
@@ -52,6 +54,7 @@ public class SmtpClient implements SendApi {
 
         try (Socket socket = SocketFactory.getDefault().createSocket()) {
             SocketAddress socketAddress = new InetSocketAddress(host, port);
+            progressBar.setProgress(0.1);
             int timeoutInMillis = 50 * 1000;
             socket.connect(socketAddress, timeoutInMillis);
 
@@ -61,9 +64,13 @@ public class SmtpClient implements SendApi {
             try (PrintWriter writer = new PrintWriter(socket.getOutputStream());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
                 SmtpUnencryptedCommandSender unencryptedCommandSender = new SmtpUnencryptedCommandSenderImpl(writer, reader, properties);
+                progressBar.setProgress(0.2);
                 unencryptedCommandSender.connectionEstablished();
+                progressBar.setProgress(0.3);
                 unencryptedCommandSender.sendEHLOCommand();
+                progressBar.setProgress(0.4);
                 unencryptedCommandSender.sendStartTlsCommand();
+                progressBar.setProgress(0.5);
 
                 try (SSLSocket sslSocket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(
                         socket, socket.getInetAddress().getHostAddress(), socket.getPort(), true);
@@ -72,14 +79,20 @@ public class SmtpClient implements SendApi {
 
                     SmtpSSLCommandSender smtpSSLCommandSender = new SmtpSSLCommandSenderImpl(sslWriter, sslReader, properties);
                     smtpSSLCommandSender.sendAuthCommands();
+                    progressBar.setProgress(0.6);
                     smtpSSLCommandSender.sendMailFromCommand();
+                    progressBar.setProgress(0.7);
                     String[] joinedAllRecipients = joinAllRecipients(to, cc, bcc);
                     smtpSSLCommandSender.sendRcptToCommand(joinedAllRecipients);
+                    progressBar.setProgress(0.8);
                     smtpSSLCommandSender.sendDataCommand(to, cc, bcc, subject, message, attachFiles);
+                    progressBar.setProgress(0.9);
                     smtpSSLCommandSender.sendQuitCommand();
+                    progressBar.setProgress(1.0);
                 }
             }
         } catch (Exception e) {
+            progressBar.setProgress(1.0);
             e.printStackTrace();
         }
     }
