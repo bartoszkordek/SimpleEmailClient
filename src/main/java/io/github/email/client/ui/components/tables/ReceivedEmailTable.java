@@ -27,26 +27,22 @@ public class ReceivedEmailTable extends TableView<Email> {
 
         TableColumn<Email, String> fromColumn = new TableColumn<>("From");
         fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
+        fromColumn.setPrefWidth(250);
         this.getColumns().add(fromColumn);
 
         TableColumn<Email, String> toColumn = new TableColumn<>("To");
         toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
+        toColumn.setPrefWidth(250);
         this.getColumns().add(toColumn);
-
-        TableColumn<Email, String> ccColumn = new TableColumn<>("Cc");
-        ccColumn.setCellValueFactory(new PropertyValueFactory<>("cc"));
-        this.getColumns().add(ccColumn);
-
-        TableColumn<Email, String> bccColumn = new TableColumn<>("Bcc");
-        bccColumn.setCellValueFactory(new PropertyValueFactory<>("bcc"));
-        this.getColumns().add(bccColumn);
 
         TableColumn<Email, String> subject = new TableColumn<>("Subject");
         subject.setCellValueFactory(new PropertyValueFactory<>("subject"));
+        subject.setPrefWidth(400);
         this.getColumns().add(subject);
 
         TableColumn<Email, String> date = new TableColumn<>("Date");
         date.setCellValueFactory(new PropertyValueFactory<>("date"));
+        date.setPrefWidth(300);
         this.getColumns().add(date);
 
     }
