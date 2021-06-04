@@ -11,17 +11,13 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import static io.github.email.client.ui.components.textfields.EmailTextFieldFactory.getEmailTextField;
 import static io.github.email.client.ui.components.textfields.EmailTextFieldFactory.getSubjectEmailTextField;
 
 public class ReceiveEmailGridPane extends GridPane {
-	private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096;
 
     public ReceiveEmailGridPane(Email email, Stage stage) {
         this.setVgap(10);
@@ -59,10 +55,12 @@ public class ReceiveEmailGridPane extends GridPane {
                 outputStream.write(buffer, 0, bytesRead);
             }
             ResponseDialogStage responseDialog = new ResponseDialogStage("Attachment " + fileName + " downloaded successfully.");
+            responseDialog.setTitle("Downloading attachment");
             responseDialog.show();
         } catch (IOException e) {
             e.printStackTrace();
             ResponseDialogStage responseDialog = new ResponseDialogStage("Error while downloading " + fileName + " attachment: " + e.getMessage());
+            responseDialog.setTitle("Downloading attachment");
             responseDialog.show();
         }
     }

@@ -1,6 +1,7 @@
 package io.github.email.client.ui.stages;
 
 import com.jfoenix.controls.JFXButton;
+import io.github.email.client.ui.components.icons.SimpleEmailIcon;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -14,6 +15,7 @@ public class ResponseDialogStage extends Stage {
         super();
         this.initModality(Modality.APPLICATION_MODAL);
         this.setScene(getResponseScene(message));
+        this.getIcons().add(SimpleEmailIcon.getIcon());
     }
 
     private Scene getResponseScene(String message) {
