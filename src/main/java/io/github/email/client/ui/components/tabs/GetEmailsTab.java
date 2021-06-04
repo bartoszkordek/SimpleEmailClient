@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class GetEmailsTab extends Tab {
+    private JFXButton getEmailsButton;
 
     public GetEmailsTab() {
         this.setClosable(false);
@@ -25,7 +26,7 @@ public class GetEmailsTab extends Tab {
 
         ProgressBar progressBar = getProgressBar();
         TableView<Email> tableView = new ReceivedEmailTable(main);
-        JFXButton getEmailsButton = new GetEmailsButton(tableView, progressBar);
+        getEmailsButton = new GetEmailsButton(tableView, progressBar);
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
@@ -41,9 +42,10 @@ public class GetEmailsTab extends Tab {
         progressBar.setPrefWidth(500);
         progressBar.setVisible(false);
         progressBar.progressProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() == 1.0){
+            if (newValue.doubleValue() == 1.0) {
                 progressBar.setVisible(false);
                 progressBar.setProgress(0);
+                getEmailsButton.setDisable(false);
             }
         });
         return progressBar;
