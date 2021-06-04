@@ -11,6 +11,7 @@ import io.github.email.client.ui.components.textfields.SubjectEmailTextField;
 import io.github.email.client.ui.stages.ResponseDialogStage;
 import io.github.email.client.validation.EmailParser;
 import io.github.email.client.validation.EmailParserImpl;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.web.HTMLEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,13 @@ public class SendEmailButton extends JFXButton {
             EmailTextField bccAddresses,
             SubjectEmailTextField subject,
             HTMLEditor htmlEditor,
-            CustomTextField attachments) {
+            CustomTextField attachments,
+            ProgressBar progressBar
+    ) {
         super("Send");
         this.getStyleClass().add("button-raised");
         this.setOnMouseClicked(event ->
-                handleSendClick(toAddresses, ccAddresses, bccAddresses, subject, htmlEditor, attachments)
+                handleSendClick(toAddresses, ccAddresses, bccAddresses, subject, htmlEditor, attachments, progressBar)
         );
     }
 
@@ -44,8 +47,11 @@ public class SendEmailButton extends JFXButton {
             EmailTextField bccAddresses,
             SubjectEmailTextField subjectText,
             HTMLEditor htmlEditor,
-            CustomTextField attachmentsField) {
+            CustomTextField attachmentsField,
+            ProgressBar progressBar
+    ) {
         logger.info("Sending email....");
+        progressBar.setVisible(true);
 
         try {
             EmailParser emailParser = new EmailParserImpl();
@@ -63,10 +69,10 @@ public class SendEmailButton extends JFXButton {
             File[] files = Arrays.stream(attachments)
                     .map(File::new)
                     .toArray(File[]::new);
-            this.sendEmail(toEmails, ccEmails, bccEmails, subject, htmlEditor.getHtmlText(), files);
+
+            this.sendEmail(toEmails, ccEmails, bccEmails, subject, htmlEditor.getHtmlText(), files, progressBar);
+
             logger.info("The e-mail has been sent successfully");
-            ResponseDialogStage responseDialog = new ResponseDialogStage("The e-mail has been sent successfully");
-            responseDialog.show();
         } catch (Exception e) {
             logger.error("Error while sending the e-mail: " + e.getMessage());
             e.printStackTrace();
@@ -81,17 +87,22 @@ public class SendEmailButton extends JFXButton {
             String[] bccEmails,
             String subject,
             String htmlContent,
-            File[] attachFiles
+            File[] attachFiles,
+            ProgressBar progressBar
     ) {
-        Properties configProperties = configUtil.getProperties();
-        smtpClient.sendEmail(
-                configProperties,
-                toEmails,
-                ccEmails,
-                bccEmails,
-                subject,
-                htmlContent,
-                attachFiles
-        );
+        Thread sendEmail = new Thread(() -> {
+            Properties configProperties = configUtil.getProperties();
+            smtpClient.sendEmail(
+                    configProperties,
+                    toEmails,
+                    ccEmails,
+                    bccEmails,
+                    subject,
+                    htmlContent,
+                    attachFiles,
+                    progressBar
+            );
+        });
+        sendEmail.start();
     }
 }

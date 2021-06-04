@@ -39,7 +39,8 @@ class SmtpClientTest {
                 bcc,
                 subject,
                 message,
-                attachFiles
+                attachFiles,
+                null
         );
     }
 }
