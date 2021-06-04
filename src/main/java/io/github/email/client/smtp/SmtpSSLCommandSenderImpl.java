@@ -120,7 +120,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "    </head>\n" +
                         "    <body>\n")
                 .append(message)
-                .append("</body>\n" + "</html>\n\"")
+                .append("</body>\n" + "</html>\n")
                 .append(carriageReturn)
                 .append(carriageReturn)
                 .append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
@@ -156,7 +156,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "    </head>\n" +
                         "    <body>\n")
                 .append(message)
-                .append("</body>\n" + "</html>\n\"")
+                .append("</body>\n" + "</html>\n")
                 .append(carriageReturn)
                 .append(carriageReturn);
 
