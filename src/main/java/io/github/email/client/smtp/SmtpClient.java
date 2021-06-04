@@ -22,7 +22,6 @@ import java.util.Properties;
 public class SmtpClient implements SendApi {
     private final Logger logger = LoggerFactory.getLogger(SmtpClient.class);
 
-    //for sending message to all recipients, to, cc, bcc flags are determined separately
     private String[] joinAllRecipients(@Nonnull String[] to, @Nonnull String[] cc, @Nonnull String[] bcc){
         String[] joinedRecipients = new String[to.length + cc.length + bcc.length];
         System.arraycopy(to, 0, joinedRecipients, 0, to.length);
@@ -47,9 +46,6 @@ public class SmtpClient implements SendApi {
 
         String host = properties.getSmtpHost();
         int port = properties.getSmtpPort();
-
-        //disable SSL checking in case of PKIX path validation issues
-        //SSLUtils.disableChecking();
 
         try (Socket socket = SocketFactory.getDefault().createSocket()) {
             SocketAddress socketAddress = new InetSocketAddress(host, port);
