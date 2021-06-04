@@ -145,10 +145,7 @@ public class ImapClient implements ReceiveApi {
                 ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("UTC"));
                 final ZonedDateTime converted = zonedDateTime.plusMinutes(540);
                 String convertedDateAndTime = converted.toLocalDateTime().toString();
-                String finalFormattedDateAndTime =
-                        convertedDateAndTime.substring(0,10)
-                                .concat(" ")
-                                .concat(convertedDateAndTime.substring(11));
+                String finalFormattedDateAndTime = convertedDateAndTime.replace("T", " ");
                 date = finalFormattedDateAndTime;
 
             } else if (line.startsWith("from: ")) {
