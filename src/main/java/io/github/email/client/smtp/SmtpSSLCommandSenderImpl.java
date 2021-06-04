@@ -120,6 +120,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "    </head>\n" +
                         "    <body>\n")
                 .append(message)
+                .append("</body>\n" + "</html>\n\"")
                 .append(carriageReturn)
                 .append(carriageReturn)
                 .append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
@@ -134,8 +135,6 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
     public void sendMessageWithAttachmentCommand(String message, File[] files) throws IOException {
 
         final String carriageReturn = "\r\n";
-
-        System.out.println(message);
 
         StringBuilder command = new StringBuilder();
         command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
@@ -157,6 +156,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "    </head>\n" +
                         "    <body>\n")
                 .append(message)
+                .append("</body>\n" + "</html>\n\"")
                 .append(carriageReturn)
                 .append(carriageReturn);
 
