@@ -2,16 +2,17 @@ package io.github.email.client.ui.components.buttons;
 
 import com.jfoenix.controls.JFXButton;
 import io.github.email.client.util.DownloadEmails;
+import io.github.email.client.util.Email;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 
 public class GetEmailsButton extends JFXButton {
 
-    private final TableView tableView;
+    private final TableView<Email> tableView;
     private final ProgressBar progressBar;
 
-    public GetEmailsButton(TableView tableView, ProgressBar progressBar) {
+    public GetEmailsButton(TableView<Email> tableView, ProgressBar progressBar) {
         super("Get emails");
         this.tableView = tableView;
         this.progressBar = progressBar;

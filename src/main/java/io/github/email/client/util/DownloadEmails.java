@@ -13,11 +13,10 @@ import java.util.Properties;
 public class DownloadEmails extends Thread {
     private final ConfigService configUtil;
     private final ProgressBar progressBar;
-    private final TableView tableView;
+    private final TableView<Email> tableView;
     private final ReceiveApi receiveApi;
-    private List<MailMetadata> metadataList;
 
-    public DownloadEmails(ProgressBar progressBar, TableView tableView) {
+    public DownloadEmails(ProgressBar progressBar, TableView<Email> tableView) {
         this.configUtil = new ConfigService();
         this.progressBar = progressBar;
         this.tableView = tableView;
@@ -27,10 +26,9 @@ public class DownloadEmails extends Thread {
     @Override
     public void run() {
         Properties configProperties = configUtil.getProperties();
-        metadataList = receiveApi.downloadEmails(configProperties, 10, progressBar);
+        List<MailMetadata> metadataList = receiveApi.downloadEmails(configProperties, 10, progressBar);
 
-        for (int i = 0; i < metadataList.size(); i++) {
-            MailMetadata metadata = metadataList.get(i);
+        for (MailMetadata metadata : metadataList) {
             Email email = new Email(
                     metadata.getFrom(),
                     metadata.getTo(),
