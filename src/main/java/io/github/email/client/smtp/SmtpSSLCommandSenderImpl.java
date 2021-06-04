@@ -23,8 +23,6 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
 
     private final Logger logger = LoggerFactory.getLogger(SmtpSSLCommandSenderImpl.class);
 
-    private final File footerFile = new File("images/cat.jpg");
-
     public SmtpSSLCommandSenderImpl(
             PrintWriter writer,
             BufferedReader reader,
@@ -100,11 +98,8 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
     }
 
     @Override
-    public void sendMessageWithoutAttachmentCommand(String message, File footerImage) throws IOException {
+    public void sendMessageWithoutAttachmentCommand(String message) {
         final String carriageReturn = "\r\n";
-
-        byte[] fileBytesParsed = Files.readAllBytes(footerImage.toPath());
-        final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
 
         StringBuilder command = new StringBuilder();
         command.append("MIME-Version: 1.0")
@@ -126,28 +121,9 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "    <body>\n")
                 .append(message)
                 .append(
-                        "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
                                 "    </body>\n" +
                                 "</html>")
                 .append(carriageReturn)
-                .append(carriageReturn)
-                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
-                .append(carriageReturn)
-                .append("Content-Type: image/jpg; name=cat.jpg")
-                .append(carriageReturn)
-                .append("Content-Disposition: form-data; name=myFile; filename=cat.jpg")
-                .append(carriageReturn)
-                .append("Content-Location: cat.jpg")
-                .append(carriageReturn)
-                .append("Content-ID: <0123456789>")
-                .append(carriageReturn)
-                .append("Content-Transfer-Encoding: base64")
-                .append(carriageReturn)
-                .append(carriageReturn)
-                .append(encodedFile)
-                .append(carriageReturn)
-                .append(carriageReturn)
-                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
                 .append(carriageReturn);
 
         sendCommand(command.toString());
@@ -156,13 +132,9 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
     }
 
     @Override
-    public void sendMessageWithAttachmentCommand(String message, File[] files, File footerImage) throws IOException {
+    public void sendMessageWithAttachmentCommand(String message, File[] files) throws IOException {
 
         final String carriageReturn = "\r\n";
-
-        String footerFileName = footerImage.getName();
-        byte[] footerFileBytesParsed = Files.readAllBytes(footerImage.toPath());
-        final String footerEncodedFile = Base64.getEncoder().encodeToString(footerFileBytesParsed);
 
         StringBuilder command = new StringBuilder();
         command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
@@ -191,22 +163,6 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                         "        <p class=\"sig\">-- <br><img src=\"cid:0123456789\"></p>\n" +
                                 "    </body>\n" +
                                 "</html>")
-                .append(carriageReturn)
-                .append(carriageReturn)
-                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
-                .append(carriageReturn)
-                .append("Content-Type: image/jpg; name=cat.jpg")
-                .append(carriageReturn)
-                .append("Content-Disposition: form-data; name=myFile; filename=cat.jpg")
-                .append(carriageReturn)
-                .append("Content-Location: cat.jpg")
-                .append(carriageReturn)
-                .append("Content-ID: <0123456789>")
-                .append(carriageReturn)
-                .append("Content-Transfer-Encoding: base64")
-                .append(carriageReturn)
-                .append(carriageReturn)
-                .append(footerEncodedFile)
                 .append(carriageReturn)
                 .append(carriageReturn);
 
@@ -281,9 +237,9 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
         }
 
         if (attachFiles.length > 0 && attachFiles[0].isFile()) {
-            sendMessageWithAttachmentCommand(message, attachFiles, footerFile);
+            sendMessageWithAttachmentCommand(message, attachFiles);
         } else {
-            sendMessageWithoutAttachmentCommand(message, footerFile);
+            sendMessageWithoutAttachmentCommand(message);
         }
 
         final String endCommand = "\r\n.\r\n";
