@@ -143,7 +143,7 @@ public class ImapClient implements ReceiveApi {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 LocalDateTime dateTime = LocalDateTime.parse(day+'-'+monthsMap.get(month)+'-'+year+' '+time , formatter);
                 ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("UTC"));
-                final ZonedDateTime converted = zonedDateTime.plusMinutes(600);
+                final ZonedDateTime converted = zonedDateTime.plusMinutes(540);
                 String convertedDateAndTime = converted.toLocalDateTime().toString();
                 String finalFormattedDateAndTime =
                         convertedDateAndTime.substring(0,10)
