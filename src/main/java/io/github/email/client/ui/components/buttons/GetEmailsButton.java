@@ -22,6 +22,7 @@ public class GetEmailsButton extends JFXButton {
 
     private void downLoadEmails(MouseEvent mouseEvent) {
         progressBar.setVisible(true);
+        this.setDisable(true);
         DownloadEmails downloadEmails = new DownloadEmails(progressBar, tableView);
         downloadEmails.start();
     }

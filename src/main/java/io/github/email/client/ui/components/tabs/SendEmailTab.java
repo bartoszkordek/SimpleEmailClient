@@ -25,6 +25,7 @@ public class SendEmailTab extends Tab {
     private CustomTextField attachments;
     private SubjectEmailTextField subject;
     private HTMLEditor htmlEditor;
+    private VBox vBox;
 
     public SendEmailTab(Stage primaryStage) {
         this.setClosable(false);
@@ -33,7 +34,7 @@ public class SendEmailTab extends Tab {
     }
 
     private Node getEmailTabContent(Stage primaryStage) {
-        VBox vBox = new VBox();
+        vBox = new VBox();
 
         htmlEditor = new HTMLEditor();
         ProgressBar progressBar = getProgressBar();
@@ -62,7 +63,8 @@ public class SendEmailTab extends Tab {
                 subject,
                 htmlEditor,
                 attachments,
-                progressBar
+                progressBar,
+                vBox
         );
 
         HBox hBox = new HBox();
@@ -84,6 +86,7 @@ public class SendEmailTab extends Tab {
             if (newValue.doubleValue() == 1.0) {
                 progressBar.setVisible(false);
                 progressBar.setProgress(0);
+                vBox.setDisable(false);
                 resetSendEmailTab();
             }
         });
