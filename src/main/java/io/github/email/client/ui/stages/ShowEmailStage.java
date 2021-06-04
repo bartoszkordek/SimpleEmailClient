@@ -11,8 +11,8 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 public class ShowEmailStage extends Stage {
-    private static final double HEIGHT = 720;
-    private static final double WIDTH = 1280;
+    private static final double HEIGHT = 600;
+    private static final double WIDTH = 800;
     private final Email email;
 
     public ShowEmailStage(Email email) {

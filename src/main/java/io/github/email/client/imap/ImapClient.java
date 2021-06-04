@@ -35,7 +35,6 @@ public class ImapClient implements ReceiveApi {
         String port = properties.getProperty("mail.imap.port");
         String user = properties.getProperty("mail.user");
         String password = properties.getProperty("mail.password");
-        properties.put("mail.imap.ssl.trust", properties.getProperty("mail.imap.host")); //trust Host
 
         //disable SSL checking in case of PKIX path validation issues
         SSLUtils.disableChecking();
