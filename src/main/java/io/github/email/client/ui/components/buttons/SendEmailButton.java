@@ -25,6 +25,7 @@ public class SendEmailButton extends JFXButton {
     private final ConfigService configUtil = new ConfigService();
     private final SendApi smtpClient = new SmtpClient();
     private final Logger logger = LoggerFactory.getLogger(SendEmailButton.class);
+    private final VBox vBox;
 
     public SendEmailButton(
             EmailTextField toAddresses,
@@ -37,6 +38,7 @@ public class SendEmailButton extends JFXButton {
             VBox vBox
     ) {
         super("Send");
+        this.vBox = vBox;
         this.getStyleClass().add("button-raised");
         this.setOnMouseClicked(event -> {
             vBox.setDisable(true);
@@ -81,6 +83,9 @@ public class SendEmailButton extends JFXButton {
             e.printStackTrace();
             ResponseDialogStage responseDialog = new ResponseDialogStage("Error while sending the e-mail: " + e.getMessage());
             responseDialog.show();
+            vBox.setDisable(false);
+            progressBar.setVisible(false);
+            progressBar.setProgress(0);
         }
     }
 
