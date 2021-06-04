@@ -96,6 +96,5 @@ public class SendEmailTab extends Tab {
         bccAddresses.setText("");
         subject.setText("");
         attachments.setText("");
-        htmlEditor.setHtmlText("");
     }
 }
