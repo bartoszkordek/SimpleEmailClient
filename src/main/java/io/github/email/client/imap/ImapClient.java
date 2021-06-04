@@ -17,11 +17,17 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -117,37 +123,14 @@ public class ImapClient implements ReceiveApi {
         for (String line : response.getLines()) {
             line = line.toLowerCase(Locale.ROOT);
             if (line.startsWith("date: ")) {
-                date = line.substring(6);
-
-                String subDate = date.substring(5,25);
-                String day = date.substring(5,7);
-                String month = date.substring(8,11);
-                month = month.substring(0,1).toUpperCase().concat(month.substring(1));
-                String year = date.substring(12, 16);
-                String time = date.substring(17,25);
-
-                Map<String,String> monthsMap = new HashMap<>();
-                monthsMap.put("Jan", "01");
-                monthsMap.put("Feb", "02");
-                monthsMap.put("Mar", "03");
-                monthsMap.put("Apr", "04");
-                monthsMap.put("May", "05");
-                monthsMap.put("Jun", "06");
-                monthsMap.put("Jul", "07");
-                monthsMap.put("Aug", "08");
-                monthsMap.put("Sep", "09");
-                monthsMap.put("Oct", "10");
-                monthsMap.put("Nov", "11");
-                monthsMap.put("Dec", "12");
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                LocalDateTime dateTime = LocalDateTime.parse(day+'-'+monthsMap.get(month)+'-'+year+' '+time , formatter);
-                ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of("UTC"));
-                final ZonedDateTime converted = zonedDateTime.plusMinutes(540);
-                String convertedDateAndTime = converted.toLocalDateTime().toString();
-                String finalFormattedDateAndTime = convertedDateAndTime.replace("T", " ");
-                date = finalFormattedDateAndTime;
-
+                String dateToFormat = line.substring(6, 31);
+                SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss");
+                formatter.setTimeZone(TimeZone.getTimeZone(ZoneId.of("GMT-7")));
+                try {
+                    date = formatter.parse(dateToFormat).toString();
+                } catch (ParseException e) {
+                    date = line.substring(6);
+                }
             } else if (line.startsWith("from: ")) {
                 from = line.substring(6);
             } else if (line.startsWith("to: ")) {
