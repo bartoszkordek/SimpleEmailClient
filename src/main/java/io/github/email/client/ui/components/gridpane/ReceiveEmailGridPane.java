@@ -30,13 +30,11 @@ public class ReceiveEmailGridPane extends GridPane {
 
         EmailTextField fromAddress = getEmailTextField("To:", email.getFrom());
         EmailTextField ccAddresses = getEmailTextField("Cc:", email.getCc());
-        EmailTextField bccAddresses = getEmailTextField("Bcc:", email.getBcc());
         SubjectEmailTextField subject = getSubjectEmailTextField(email);
 
         return new CustomTextField[]{
                 fromAddress,
                 ccAddresses,
-                bccAddresses,
                 subject
         };
     }
