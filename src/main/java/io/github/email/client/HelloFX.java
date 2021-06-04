@@ -1,15 +1,14 @@
 package io.github.email.client;
 
+import io.github.email.client.ui.components.icons.SimpleEmailIcon;
 import io.github.email.client.ui.components.tabs.GetEmailsTab;
 import io.github.email.client.ui.components.tabs.SendEmailTab;
 import io.github.email.client.ui.components.tabs.SettingsTab;
 import io.github.email.client.ui.scenes.MainScene;
-import io.github.email.client.util.ImageLoader;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class HelloFX extends Application {
@@ -21,7 +20,7 @@ public class HelloFX extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("Simple email client");
         primaryStage.setHeight(HEIGHT);
         primaryStage.setWidth(WIDTH);
@@ -33,7 +32,7 @@ public class HelloFX extends Application {
                 HelloFX.class.getResource("/css/components.css").toExternalForm()
         );
         primaryStage.setScene(mainScene);
-        primaryStage.getIcons().add(getIcon("images/icon/Envelope-icon.png"));
+        primaryStage.getIcons().add(SimpleEmailIcon.getIcon());
 
         primaryStage.show();
     }
@@ -51,10 +50,4 @@ public class HelloFX extends Application {
 
         return tabPane;
     }
-
-    private Image getIcon(String icon) {
-        ImageLoader imageLoader = new ImageLoader();
-        return imageLoader.getImage(icon);
-    }
-
 }
