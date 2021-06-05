@@ -12,7 +12,7 @@ Celem projektu jest implementacja protokołów SMTP, IMAP wraz z wykonaniem pros
 
 ## Technologie
 * Język: Java 11
-* Interfejs użytkownika: biblioteka Swing
+* Interfejs użytkownika: biblioteka JavaFX
 * Ciągła integracja (CI): GitHub Actions
 
 ## Jak uruchomić?
@@ -48,7 +48,7 @@ The aim of the project is to implement the SMTP and IMAP protocols along with th
 
 ## Technologies
 * Language: Java 11
-* User interface: Swing library
+* User interface: JavaFX library
 * Continuous integration (CI): GitHub Actions
 
 ## How to start?
