@@ -102,13 +102,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
         final String carriageReturn = "\r\n";
 
         StringBuilder command = new StringBuilder();
-        command.append("MIME-Version: 1.0")
-                .append(carriageReturn)
-                .append("Content-Type:multipart/mixed; boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
-                .append(carriageReturn)
-                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
-                .append(carriageReturn)
-                .append("Content-Type: text/html; charset=utf-8")
+        command.append("Content-Type: text/html; charset=utf-8")
                 .append(carriageReturn)
                 .append("Content-Transfer-Encoding: 8bit")
                 .append(carriageReturn)
@@ -122,8 +116,6 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                 .append(message)
                 .append("</body>\n" + "</html>\n")
                 .append(carriageReturn)
-                .append(carriageReturn)
-                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
                 .append(carriageReturn);
 
         sendCommand(command.toString());
@@ -137,16 +129,17 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
         final String carriageReturn = "\r\n";
 
         StringBuilder command = new StringBuilder();
-        command.append("Content-Type:multipart/mixed;boundary=KkK170891tpbkKk__FV_KKKkkkjjwq")
+        command.append("MIME-Version: 1.0")
                 .append(carriageReturn)
-                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
+                .append("Content-Type: multipart/mixed; boundary=\"42\"")
+                .append(carriageReturn)
+                .append("--42")
                 .append(carriageReturn)
                 //plain/html text message
-                .append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
-                .append(carriageReturn)
                 .append("Content-Type: text/html; charset=utf-8")
                 .append(carriageReturn)
                 .append("Content-Transfer-Encoding: 8bit")
+                .append(carriageReturn)
                 .append(carriageReturn)
                 .append("<!DOCTYPE html>\n" +
                         "<html>\n" +
@@ -164,24 +157,29 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
             String fileName = file.getName();
             byte[] fileBytesParsed = Files.readAllBytes(file.toPath());
             final String encodedFile = Base64.getEncoder().encodeToString(fileBytesParsed);
-            command.append("--KkK170891tpbkKk__FV_KKKkkkjjwq")
+            command.append("--42")
                     .append(carriageReturn)
-                    .append("Content-Type:application/octet-stream;name=")
+                    .append("Content-Type: application/octet-stream; name=")
                     .append(fileName)
                     .append(carriageReturn)
-                    .append("Content-Transfer-Encoding:base64 ")
+                    .append("Content-Transfer-Encoding: base64")
                     .append(carriageReturn)
-                    .append("Content-Disposition:attachment;filename=")
+                    .append("Content-Disposition: attachment; filename=")
                     .append(fileName)
+                    .append(carriageReturn)
                     .append(carriageReturn)
                     .append(encodedFile)
+                    .append(carriageReturn)
                     .append(carriageReturn);
         }
 
-        command.append("--KkK170891tpbkKk__FV_KKKkkkjjwq--")
+        command.append("--42--")
+                .append(carriageReturn)
                 .append(carriageReturn);
 
-        sendCommand(command.toString());
+        String comm = command.toString();
+        logger.info("c111: " + comm);
+        sendCommand(comm);
 
         logger.debug("Message with attachment sent successfully!");
     }
