@@ -67,7 +67,7 @@ public class ReceiveEmailGridPane extends GridPane {
 
     private CustomTextField[] parseEmailAddressesFromEmail(Email email) {
 
-        EmailTextField fromAddress = getEmailTextField("To:", email.getFrom());
+        EmailTextField fromAddress = getEmailTextField("To:", email.getTo());
         EmailTextField ccAddresses = getEmailTextField("Cc:", email.getCc());
         SubjectEmailTextField subject = getSubjectEmailTextField(email);
 

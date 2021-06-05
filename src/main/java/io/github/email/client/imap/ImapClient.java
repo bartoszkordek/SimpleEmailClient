@@ -20,14 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -123,8 +116,8 @@ public class ImapClient implements ReceiveApi {
         if (!response.getConfirmation().contains("OK")) {
             throw new IOException("Fetching headers for ID " + id + " failed");
         }
-        String date = "", from = "", subject = "";
-        List<String> to = new ArrayList<>(), cc = new ArrayList<>(), bcc = new ArrayList<>();
+        String date = "", subject = "";
+        List<String> to = new ArrayList<>(), cc = new ArrayList<>(), bcc = new ArrayList<>(), from = new ArrayList<>();
         for (String line : response.getLines()) {
             line = line.toLowerCase(Locale.ROOT);
             if (line.startsWith("date: ")) {
@@ -137,7 +130,7 @@ public class ImapClient implements ReceiveApi {
                     date = line.substring(6);
                 }
             } else if (line.startsWith("from: ")) {
-                from = line.substring(6);
+                from.add(line.substring(6));
             } else if (line.startsWith("to: ")) {
                 to.add(line.substring(4));
             } else if (line.startsWith("cc: ")) {
@@ -176,7 +169,29 @@ public class ImapClient implements ReceiveApi {
                 bodyHtml = new String(bodyBytes, StandardCharsets.UTF_8);
             } // discard the rest
         }
-        return new MailMetadata(date, from, to.toString(), cc.toString(), bcc.toString(), subject, bodyPlain, bodyHtml, attachments);
+
+        return new MailMetadata(
+                date,
+                getStringFromList(from),
+                getStringFromList(to),
+                getStringFromList(cc),
+                getStringFromList(bcc),
+                subject,
+                bodyPlain,
+                bodyHtml,
+                attachments
+        );
+    }
+
+    private String getStringFromList(List<String> list) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < list.size(); i++) {
+            builder.append(list.get(i));
+            if (i != list.size() - 1) builder.append("; ");
+        }
+
+        return builder.toString();
     }
 
     private String getFileName(String textToken) {
