@@ -98,33 +98,7 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
     }
 
     @Override
-    public void sendMessageWithoutAttachmentCommand(String message) {
-        final String carriageReturn = "\r\n";
-
-        StringBuilder command = new StringBuilder();
-        command.append("Content-Type: text/html; charset=utf-8")
-                .append(carriageReturn)
-                .append("Content-Transfer-Encoding: 8bit")
-                .append(carriageReturn)
-                .append("<!DOCTYPE html>\n" +
-                        "<html>\n" +
-                        "    <head>\n" +
-                        "        <meta charset=\"utf-8\">\n" +
-                        "        <title></title>\n" +
-                        "    </head>\n" +
-                        "    <body>\n")
-                .append(message)
-                .append("</body>\n" + "</html>\n")
-                .append(carriageReturn)
-                .append(carriageReturn);
-
-        sendCommand(command.toString());
-
-        logger.debug("Message without attachment sent successfully!");
-    }
-
-    @Override
-    public void sendMessageWithAttachmentCommand(String message, File[] files) throws IOException {
+    public void sendMessage(String message, File[] files) throws IOException {
 
         final String carriageReturn = "\r\n";
 
@@ -177,11 +151,9 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
                 .append(carriageReturn)
                 .append(carriageReturn);
 
-        String comm = command.toString();
-        logger.info("c111: " + comm);
-        sendCommand(comm);
+        sendCommand(command.toString());
 
-        logger.debug("Message with attachment sent successfully!");
+        logger.debug("Message sent successfully!");
     }
 
 
@@ -228,11 +200,10 @@ public class SmtpSSLCommandSenderImpl implements SmtpSSLCommandSender {
             sendCommand(toCommand);
         }
 
-        if (attachFiles.length > 0 && attachFiles[0].isFile()) {
-            sendMessageWithAttachmentCommand(message, attachFiles);
-        } else {
-            sendMessageWithoutAttachmentCommand(message);
+        if (attachFiles.length > 0 && !attachFiles[0].isFile()) {
+            attachFiles = new File[0];
         }
+        sendMessage(message, attachFiles);
 
         final String endCommand = "\r\n.\r\n";
         sendCommand(endCommand);

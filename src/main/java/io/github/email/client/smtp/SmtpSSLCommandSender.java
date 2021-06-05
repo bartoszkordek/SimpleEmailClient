@@ -12,9 +12,7 @@ public interface SmtpSSLCommandSender {
 
     String sendRcptToCommand(@Nonnull String[] recipients) throws IOException;
 
-    void sendMessageWithoutAttachmentCommand(String message) throws IOException;
-
-    void sendMessageWithAttachmentCommand(String message, File[] attachments) throws IOException;
+    void sendMessage(String message, File[] attachments) throws IOException;
 
     String sendDataCommand(
             @Nonnull String[] to,
