@@ -64,9 +64,13 @@ public class ImapClient implements ReceiveApi {
                 int size = Math.min(limit, mailIds.size());
                 for (int i = 0; i < size; i++) {
                     int mailId = mailIds.get(i);
-                    MailMetadata mailMetadata = fetchMetadata(writer, reader, mailId);
-                    logger.info(i + ". email downloaded using IMAP");
-                    mailMetadatas.add(mailMetadata);
+                    try {
+                        MailMetadata mailMetadata = fetchMetadata(writer, reader, mailId);
+                        logger.info(i + ". email downloaded using IMAP");
+                        mailMetadatas.add(mailMetadata);
+                    } catch (IOException e) {
+                        logger.error("Mail could not be fetched.");
+                    }
                     updateProgressBar(i, size);
                 }
                 return mailMetadatas;
